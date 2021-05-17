@@ -1,89 +1,57 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+    <v-col cols="12" lg="4">
+      <v-sheet width="400" class="mx-auto my-6">
+        <v-text-field
+          v-model="searchMsg"
+          label="フリーワード検索"
+          outlined
+          clearable
+          prepend-inner-icon="mdi-magnify"
+        ></v-text-field>
+      </v-sheet>
+    </v-col>
+    <v-col cols="12" lg="8">
+      <h1>TABLE is here</h1>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
-
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
+  components: {},
+  data: function() {
+    return {
+      searchMsg: "",
+      searchItems: {
+        campaignType: [
+          "カタログ ",
+          "荷物同梱",
+          "PREMIUM PLUS",
+          "BIRTH DAY PLUS",
+          "ニュースレター",
+          "WEB",
+          "LINE",
+          "X-ing Gate",
+          "お詫び",
+          "リサイクル",
+          "お祝いクーポン",
+          "新聞",
+          "雑誌",
+          "他社同梱",
+          "FAX会員",
+          "送料無料"
+        ],
+        percentOff: ["5%OFF", "10%OFF", "15%OFF", "20%OFF", "30%OFF"],
+        priceOff: [
+          "500円OFF",
+          "1,000円OFF",
+          "2,000円OFF",
+          "3,000円OFF",
+          "5,000円OFF"
+        ]
+      }
+    };
   }
-}
+};
 </script>
