@@ -1,18 +1,48 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" lg="4">
-      <v-sheet width="400" class="mx-auto my-6">
-        <v-text-field
-          v-model="searchMsg"
-          label="フリーワード検索"
-          outlined
-          clearable
-          prepend-inner-icon="mdi-magnify"
-        ></v-text-field>
-      </v-sheet>
+    <v-col cols="12" sm="4">
+      <v-text-field
+        class="my-0"
+        v-model="searchMsg"
+        label="フリーワード検索"
+        outlined
+        clearable
+        prepend-inner-icon="mdi-magnify"
+      ></v-text-field>
     </v-col>
-    <v-col cols="12" lg="8">
-      <h1>TABLE is here</h1>
+    <v-col cols="12" sm="8">
+      <v-chip-group v-model="itemType" column>
+        <v-chip
+          v-for="(item, i) in searchItems.campaignType"
+          :key="i"
+          :value="item"
+          filter
+          outlined
+          >{{ item }}</v-chip
+        >
+      </v-chip-group>
+      <v-divider class="ma-2"></v-divider>
+      <v-chip-group v-model="itemType" column>
+        <v-chip
+          v-for="(item, i) in searchItems.priceOff"
+          :key="i"
+          :value="item"
+          filter
+          outlined
+          >{{ item }}</v-chip
+        >
+      </v-chip-group>
+      <v-divider class="ma-2"></v-divider>
+      <v-chip-group v-model="itemType" column>
+        <v-chip
+          v-for="(item, i) in searchItems.percentOff"
+          :key="i"
+          :value="item"
+          filter
+          outlined
+          >{{ item }}</v-chip
+        >
+      </v-chip-group>
     </v-col>
   </v-row>
 </template>
@@ -23,6 +53,7 @@ export default {
   data: function() {
     return {
       searchMsg: "",
+      itemType: "",
       searchItems: {
         campaignType: [
           "カタログ ",
