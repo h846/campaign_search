@@ -9,6 +9,7 @@
         clearable
         prepend-inner-icon="mdi-magnify"
       ></v-text-field>
+      <h1>{{ now }}</h1>
     </v-col>
     <v-col cols="12" sm="8">
       <v-chip-group v-model="itemType" column>
@@ -18,8 +19,9 @@
           :value="item"
           filter
           outlined
-          >{{ item }}</v-chip
         >
+          {{ item }}
+        </v-chip>
       </v-chip-group>
       <v-divider class="ma-2"></v-divider>
       <v-chip-group v-model="itemType" column>
@@ -44,12 +46,20 @@
         >
       </v-chip-group>
     </v-col>
+    <v-col>
+      <campaign-table :campaign-list="dataList" />
+    </v-col>
   </v-row>
 </template>
 
 <script>
+import axios from "axios";
+import CampaignTable from "~/components/campaignTable.vue";
+
 export default {
-  components: {},
+  components: {
+    CampaignTable
+  },
   data: function() {
     return {
       searchMsg: "",
@@ -81,8 +91,31 @@ export default {
           "3,000円OFF",
           "5,000円OFF"
         ]
-      }
+      },
+      dataList: []
     };
+  },
+  created() {
+    this.getCampaignData();
+  },
+  methods: {
+    getCampaignData: async function() {
+      await axios
+        .get("http://lejnet/API/accdb", {
+          params: {
+            db: "CSNet/dataCenter/DB/Product/campaign.accdb",
+            table: "campaign_data"
+          }
+        })
+        .then(res => {
+          this.dataList = res.data;
+        });
+    }
+  },
+  computed: {
+    now: function() {
+      return this.$moment().format("YYYY/MM/DD");
+    }
   }
 };
 </script>
