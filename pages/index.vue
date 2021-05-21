@@ -1,17 +1,6 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" sm="4">
-      <v-text-field
-        class="my-0"
-        v-model="searchMsg"
-        label="フリーワード検索"
-        outlined
-        clearable
-        prepend-inner-icon="mdi-magnify"
-      ></v-text-field>
-      <h1>{{ now }}</h1>
-    </v-col>
-    <v-col cols="12" sm="8">
+    <v-col cols="12">
       <v-chip-group v-model="itemType" column>
         <v-chip
           v-for="(item, i) in searchItems.campaignType"
@@ -46,7 +35,7 @@
         >
       </v-chip-group>
     </v-col>
-    <v-col>
+    <v-col cols="12">
       <campaign-table :campaign-list="dataList" />
     </v-col>
   </v-row>
@@ -62,7 +51,6 @@ export default {
   },
   data: function() {
     return {
-      searchMsg: "",
       itemType: "",
       searchItems: {
         campaignType: [
@@ -104,7 +92,7 @@ export default {
         .get("http://lejnet/API/accdb", {
           params: {
             db: "CSNet/dataCenter/DB/Product/campaign.accdb",
-            table: "campaign_data"
+            table: "campaign_data00_test"
           }
         })
         .then(res => {
