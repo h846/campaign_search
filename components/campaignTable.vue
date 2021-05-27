@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="1" class="px-4">
+  <v-card elevation="1" class="px-4" outlined>
     <v-data-table
       :headers="headers"
       :items="rtnList()"
@@ -10,7 +10,7 @@
       hide-default-footer
       dense
       :page.sync="page"
-      :items-per-page="5"
+      :items-per-page="10"
       @page-count="pageCount = $event"
     >
       <!-- Search Form -->
@@ -19,52 +19,47 @@
           v-model="search"
           append-icon="mdi-magnify"
           label="フリーワード検索"
-          class="mb-2"
+          class="my-3"
         ></v-text-field>
+      </template>
+      <!-- Custom Col -->
+      <template v-slot:item.ref="{ item }">
+        <div v-for="(i, idx) in item.ref" :key="idx">
+          <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
+            item.ref[idx]
+          }}</a>
+        </div>
+      </template>
+      <template v-slot:item.isExpired="{ item }">
+        <v-chip
+          v-if="item.isExpired"
+          class="my-2"
+          small
+          color="red"
+          text-color="white"
+          >期限切れ</v-chip
+        >
       </template>
       <!-- Expand -->
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">{{ item }}</td>
+        <td :colspan="headers.length" class="pa-5 ">
+          <div>
+            取得方法:
+            <span class="font-weight-bold">{{ item["取得方法"] }}</span>
+          </div>
+          <div v-if="!!item['特典内容']" class="red--text text--lighten-1">
+            送料無料
+          </div>
+          <div v-if="!!item['使用条件1']">
+            使用条件1:
+            <span class="font-weight-bold">{{ item["使用条件1"] }}</span>
+          </div>
+          <div v-if="!!item['使用条件2']">
+            使用条件2:
+            <span class="font-weight-bold">{{ item["使用条件2"] }}</span>
+          </div>
+        </td>
       </template>
-      <!-- Table Body -->
-      <template v-slot:item="{ item, expand, isExpanded }">
-        <tr :class="{ gray: item.isExpired }">
-          <td>
-            <v-btn @click="expand(!isExpanded)" text>詳細</v-btn>
-          </td>
-          <td class="d-block d-sm-table-cell">
-            {{ item["概要"] }}
-          </td>
-          <td class="d-block d-sm-table-cell">
-            {{ item["種別"] }}
-          </td>
-          <td class="d-block d-sm-table-cell">
-            {{ item["コード"] }}
-          </td>
-          <td class="d-block d-sm-table-cell">
-            {{ item["開始日"] }}
-          </td>
-          <td class="d-block d-sm-table-cell">
-            {{ item["終了日"] }}
-          </td>
-        </tr>
-      </template>
-
-      <!-- 資料カラムをリンク化-->
-      <!--
-      <template v-slot:item.ref="{ item }">
-        <div
-          v-for="(i, idx) in item.ref"
-          :key="idx"
-          class="mb-3"
-          style="width:100px;"
-        >
-          <a :href="item.ref[idx + 1]" v-if="idx % 2 == 0">
-            {{ item.ref[idx] }}
-          </a>
-        </div>
-      </template>
-      -->
     </v-data-table>
     <v-card-actions>
       <v-pagination v-model="page" :length="20"></v-pagination>
@@ -80,10 +75,12 @@ export default {
       pageCount: 0,
       search: "",
       headers: [
-        { text: "", value: "data-table-expand" },
+        { text: "", value: "isExpired", sortable: false },
+        { text: "詳細", value: "data-table-expand" },
         { text: "概要", value: "概要", sortable: false },
-        { text: "種別", value: "種別", sortable: false },
+        { text: "種類", value: "種別", sortable: false },
         { text: "コード", value: "コード", sortable: false },
+        { text: "資料", value: "ref", sortable: false },
         { text: "開始日", value: "開始日" },
         { text: "終了日", value: "終了日" }
         /*
@@ -123,6 +120,7 @@ export default {
         val.ref = tmp;
         //ID付与
         val.ID = idx;
+
         return val;
       });
 
@@ -134,13 +132,17 @@ export default {
           return 1;
         }
       });
+
+      console.log(list);
       return list;
     }
   }
 };
 </script>
+
 <style lang="scss" scoped>
-.gray {
-  background-color: #888;
+.v-text-field {
+  width: 400px;
+  margin: 0 0 0 auto;
 }
 </style>
