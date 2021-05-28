@@ -83,13 +83,6 @@ export default {
         { text: "資料", value: "ref", sortable: false },
         { text: "開始日", value: "開始日" },
         { text: "終了日", value: "終了日" }
-        /*
-        { text: "資料", value: "ref", sortable: false },
-        { text: "取得方法", value: "取得方法", sortable: false },
-        { text: "送料", value: "特典内容", sortable: false },
-        { text: "詳細1", value: "使用条件1", sortable: false },
-        { text: "詳細2", value: "使用条件2", sortable: false },
-        */
       ],
       expanded: []
     };
@@ -116,8 +109,9 @@ export default {
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
         let tmp = String(val["資料"]).split(/[,\s\r\n]/g);
         //空文字除去
-        tmp = tmp.filter(val => !!val);
-        val.ref = tmp;
+        val.ref = tmp.filter(val => !!val);
+        //使用条件1整形
+        String(val["使用条件1"]).split(",");
         //ID付与
         val.ID = idx;
 
