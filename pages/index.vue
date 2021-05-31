@@ -83,7 +83,7 @@ export default {
       dataList: []
     };
   },
-  created() {
+  mounted() {
     this.getCampaignData();
   },
   methods: {

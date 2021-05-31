@@ -2,7 +2,7 @@
   <v-card elevation="1" class="px-4" outlined>
     <v-data-table
       :headers="headers"
-      :items="rtnList()"
+      :items="list"
       :search="search"
       :expanded.sync="expanded"
       item-key="ID"
@@ -22,7 +22,7 @@
           class="my-3"
         ></v-text-field>
       </template>
-      <!-- Custom Col -->
+      <!-- Custom Cols -->
       <template v-slot:item.ref="{ item }">
         <div v-for="(i, idx) in item.ref" :key="idx">
           <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
@@ -44,6 +44,10 @@
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length" class="pa-5 ">
           <div>
+            種類:
+            <span class="font-weight-bold">{{ item["種別"] }}</span>
+          </div>
+          <div>
             取得方法:
             <span class="font-weight-bold">{{ item["取得方法"] }}</span>
           </div>
@@ -52,7 +56,13 @@
           </div>
           <div v-if="!!item['使用条件1']">
             使用条件1:
-            <span class="font-weight-bold">{{ item["使用条件1"] }}</span>
+            <v-chip
+              v-for="(i, k) in item.conditions"
+              :key="k"
+              class="ml-2"
+              color="primary"
+              >{{ i }}</v-chip
+            >
           </div>
           <div v-if="!!item['使用条件2']">
             使用条件2:
@@ -71,6 +81,7 @@ export default {
   props: { campaignList: Array },
   data: function() {
     return {
+      list: [],
       page: 1,
       pageCount: 0,
       search: "",
@@ -78,7 +89,6 @@ export default {
         { text: "", value: "isExpired", sortable: false },
         { text: "詳細", value: "data-table-expand" },
         { text: "概要", value: "概要", sortable: false },
-        { text: "種類", value: "種別", sortable: false },
         { text: "コード", value: "コード", sortable: false },
         { text: "資料", value: "ref", sortable: false },
         { text: "開始日", value: "開始日" },
@@ -89,7 +99,7 @@ export default {
   },
   methods: {
     validDate: function(arg) {
-      let now = this.$moment();
+      let now = this.$moment().format("YYYY-MM-DD");
       let endDate = this.$moment(arg);
       return endDate.isBefore(now);
     },
@@ -97,13 +107,14 @@ export default {
       //リスト整形処理
       let list = this.campaignList.map((val, idx) => {
         //format date
-        val["終了日"] = this.$moment(val["終了日"]).format("YYYY/MM/DD");
+        val["終了日"] = this.$moment(val["終了日"]).format("YYYY-MM-DD");
         // If the campaign period has already expired, flag it.
         if (this.validDate(val["終了日"])) {
           val["isExpired"] = true;
         } else {
           val["isExpired"] = false;
         }
+        val["終了日"] = this.$moment(val["終了日"]).format("YYYY/MM/DD");
         //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         //カンマ、改行コード、スペースを除去して切り分ける
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
@@ -111,7 +122,7 @@ export default {
         //空文字除去
         val.ref = tmp.filter(val => !!val);
         //使用条件1整形
-        String(val["使用条件1"]).split(",");
+        val.conditions = String(val["使用条件1"]).split(",");
         //ID付与
         val.ID = idx;
 
@@ -126,9 +137,12 @@ export default {
           return 1;
         }
       });
-
-      console.log(list);
-      return list;
+      this.list = list;
+    }
+  },
+  watch: {
+    campaignList: function() {
+      this.rtnList();
     }
   }
 };
