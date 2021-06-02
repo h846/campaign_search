@@ -12,6 +12,8 @@
       :page.sync="page"
       :items-per-page="10"
       @page-count="pageCount = $event"
+      :loading="loading"
+      loading-text="読み込み中.....少々お待ちください。"
     >
       <!-- Search Form -->
       <template v-slot:top>
@@ -23,14 +25,14 @@
         ></v-text-field>
       </template>
       <!-- Custom Cols -->
-      <template v-slot:item.ref="{ item }">
+      <template v-slot:[`item.ref`]="{ item }">
         <div v-for="(i, idx) in item.ref" :key="idx">
           <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
             item.ref[idx]
           }}</a>
         </div>
       </template>
-      <template v-slot:item.isExpired="{ item }">
+      <template v-slot:[`item.isExpired`]="{ item }">
         <v-chip
           v-if="item.isExpired"
           class="my-2"
@@ -78,7 +80,7 @@
 </template>
 <script>
 export default {
-  props: { campaignList: Array },
+  props: { campaignList: Array, loading: Boolean },
   data: function() {
     return {
       list: [],
@@ -114,7 +116,7 @@ export default {
         } else {
           val["isExpired"] = false;
         }
-        val["終了日"] = this.$moment(val["終了日"]).format("YYYY/MM/DD");
+        val["終了日"] = String(val["終了日"]).replace(/-/g, "/");
         //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         //カンマ、改行コード、スペースを除去して切り分ける
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
@@ -138,6 +140,7 @@ export default {
         }
       });
       this.list = list;
+      this.$emit("loaded");
     }
   },
   watch: {

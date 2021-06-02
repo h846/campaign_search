@@ -1,19 +1,19 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12">
-      <v-chip-group v-model="itemType" column>
+      <v-chip-group v-model="searchItem" column>
         <v-chip
-          v-for="(item, i) in searchItems.campaignType"
-          :key="i"
+          v-for="(item, name, idx) in searchItems.campaignType"
+          :key="idx"
           :value="item"
           filter
           outlined
         >
-          {{ item }}
+          {{ name }}
         </v-chip>
       </v-chip-group>
       <v-divider class="ma-2"></v-divider>
-      <v-chip-group v-model="itemType" column>
+      <v-chip-group v-model="searchItem" column>
         <v-chip
           v-for="(item, i) in searchItems.priceOff"
           :key="i"
@@ -24,7 +24,7 @@
         >
       </v-chip-group>
       <v-divider class="ma-2"></v-divider>
-      <v-chip-group v-model="itemType" column>
+      <v-chip-group v-model="searchItem" column>
         <v-chip
           v-for="(item, i) in searchItems.percentOff"
           :key="i"
@@ -36,7 +36,11 @@
       </v-chip-group>
     </v-col>
     <v-col cols="12">
-      <campaign-table :campaign-list="dataList" />
+      <campaign-table
+        :campaign-list="dataList"
+        :loading="loading"
+        @loaded="loaded"
+      />
     </v-col>
   </v-row>
 </template>
@@ -51,43 +55,47 @@ export default {
   },
   data: function() {
     return {
-      itemType: "",
+      searchItem: "",
       searchItems: {
-        campaignType: [
-          "カタログ ",
-          "荷物同梱",
-          "PREMIUM PLUS",
-          "BIRTH DAY PLUS",
-          "ニュースレター",
-          "WEB",
-          "LINE",
-          "X-ing Gate",
-          "お詫び",
-          "リサイクル",
-          "お祝いクーポン",
-          "新聞",
-          "雑誌",
-          "他社同梱",
-          "FAX会員",
-          "送料無料"
-        ],
-        percentOff: ["5%OFF", "10%OFF", "15%OFF", "20%OFF", "30%OFF"],
+        campaignType: {
+          //テーブル列名:DB上の列名
+          "カタログ ": "カタログ",
+          荷物同梱: "荷物同梱",
+          "PREMIUM PLUS": "premiumPlus",
+          "BIRTH DAY PLUS": "birthdayPlus",
+          ニュースレター: "ニュースレター",
+          WEB: "WEB",
+          LINE: "LINE",
+          "X-ing Gate": "XGate",
+          お詫び: "お詫び",
+          リサイクル: "リサイクル",
+          お祝いクーポン: "お祝い",
+          新聞: "NPAD",
+          雑誌: "雑誌",
+          他社同梱: "NPI",
+          FAX会員: "FAX",
+          送料無料: "送料無料"
+        },
+        percentOff: ["5%off", "10%off", "15%off", "20%off", "30%off"],
         priceOff: [
-          "500円OFF",
-          "1,000円OFF",
-          "2,000円OFF",
-          "3,000円OFF",
-          "5,000円OFF"
+          "500円off",
+          "1000円off",
+          "2000円off",
+          "3000円off",
+          "5000円off"
         ]
       },
-      dataList: []
+      originalList: [],
+      dataList: [],
+      loading: false
     };
   },
-  mounted() {
+  created() {
     this.getCampaignData();
   },
   methods: {
     getCampaignData: async function() {
+      this.loading = true;
       await axios
         .get("http://lejnet/API/accdb", {
           params: {
@@ -96,13 +104,37 @@ export default {
           }
         })
         .then(res => {
+          this.originalList = res.data;
           this.dataList = res.data;
+          //console.log(this.originalList);
         });
+    },
+    search: function() {
+      let item = this.searchItem;
+      let reg = /off$/;
+
+      if (item == undefined) {
+        this.dataList = this.originalList;
+      } else if (item == "送料無料") {
+        this.dataList = this.originalList.filter(
+          val => val["特典内容"] === "送料無料"
+        );
+      } else if (reg.test(item)) {
+        this.dataList = this.originalList.filter(val =>
+          val.conditions.some(val => val == item)
+        );
+      } else {
+        this.dataList = this.originalList.filter(val => val["種別"] === item);
+      }
+    },
+    loaded: function() {
+      this.loading = false;
     }
   },
-  computed: {
-    now: function() {
-      return this.$moment().format("YYYY/MM/DD");
+  watch: {
+    // v-model の値が遅延して反映されるため
+    searchItem: function() {
+      this.search();
     }
   }
 };

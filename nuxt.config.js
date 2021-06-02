@@ -6,10 +6,10 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - campaign-search',
-    title: 'campaign-search',
+    titleTemplate: '%s',
+    title: 'キャンペーン検索',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'ja'
     },
     meta: [{
         charset: 'utf-8'
