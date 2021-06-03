@@ -4,9 +4,7 @@
 
     <v-card-title v-if="discountPrice > 0">
       <span class="text">割引後価格:</span>
-      <money class="priceText mx-2" v-model="discountPrice" v-bind="money">{{
-        discountPrice
-      }}</money>
+      <span>{{ price }}</span>
       <span>円</span>
     </v-card-title>
   </v-card>
@@ -15,14 +13,15 @@
 export default {
   data: function() {
     return {
-      discountPrice: 100,
-      money: {
-        decimal: ".",
-        thousands: ",",
-        precision: 0,
-        masked: false
-      }
+      discountPrice: 999999
     };
+  },
+  computed: {
+    price: function() {
+      // 円マーク付与と3桁区切り
+      let price = this.discountPrice;
+      return "\xA5" + price.toLocaleString();
+    }
   }
 };
 </script>
