@@ -1,6 +1,9 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  router: {
+    base: process.env.NODE_ENV === 'development' ? '/' : '/CSNet/ORDER_TOOL/campaign_search/home/'
+  },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
 
@@ -25,10 +28,15 @@ export default {
       }
     ],
     link: [{
-      rel: 'icon',
-      type: 'image/x-icon',
-      href: '/favicon.ico'
-    }]
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: '/favicon.ico'
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Kosugi&display=swap'
+      }
+    ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -59,6 +67,7 @@ export default {
     customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: false,
+      defaultAssets: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
