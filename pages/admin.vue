@@ -6,7 +6,13 @@
         <v-form>
           <v-container>
             <v-row>
-              <v-col sm="6" cols="12">
+              <v-col cols="12" class="py-0 mb-3">
+                <div class="item-header">
+                  キャンペーン種別
+                  <span class="sub-header">
+                    キャンペーンの種別を一覧から選択してください。
+                  </span>
+                </div>
                 <v-select
                   outlined
                   color="success"
@@ -17,28 +23,42 @@
                   label="種別"
                   return-object
                   single-line
-                  hint="キャンペーンの種別を選択してください"
                   persistent-hint
                   dense
+                  :hide-details="true"
                 ></v-select>
               </v-col>
-              <v-col sm="6" cols="12">
+              <v-col cols="12" class="py-0 mb-3">
+                <div class="item-header">
+                  キャンペーンコード
+                  <span class="sub-header">
+                    キャンペーンコードを入力してください。
+                  </span>
+                </div>
                 <v-text-field
                   outlined
-                  v-model="campCode"
+                  v-model="$v.campCode.$model"
                   color="success"
                   label="キャンペーンコード"
-                  :rules="rules.code"
-                  required
-                  hint="キャンペーンコードを入力してください"
-                  persistent-hint
+                  :hide-details="true"
                   dense
                 ></v-text-field>
+                <div
+                  class="text-left red--text my-0 py-0"
+                  v-if="$v.campCode.$error"
+                >
+                  性別を選択してください。
+                </div>
               </v-col>
-            </v-row>
-            <p class="ma-0 pa-0 my-5">キャンペーン期間を選択してください</p>
-            <v-row justify="center" align="center">
-              <v-col cols="5">
+              <v-col cols="12" class="py-0">
+                <div class="item-header">
+                  キャンペーン期間
+                  <span class="sub-header">
+                    キャンペーンの有効期間を入力してください
+                  </span>
+                </div>
+              </v-col>
+              <v-col cols="6" class="py-0">
                 <v-menu max-width="290px" min-width="290px" offset-y>
                   <!-- ポップアップを追加する要素にv-on="on" -->
                   <template v-slot:activator="{ on }">
@@ -59,13 +79,8 @@
                   />
                 </v-menu>
               </v-col>
-              <v-col cols="1" class="pa-0"
-                ><v-icon large color="blue-grey darken-2"
-                  >mdi-arrow-right</v-icon
-                ></v-col
-              >
-              <v-col cols="5">
-                <v-menu max-width="290px" min-width="290px" offset-y>
+              <v-col cols="6" class="py-0">
+                <v-menu offset-y>
                   <!-- ポップアップを追加する要素にv-on="on" -->
                   <template v-slot:activator="{ on }">
                     <v-text-field
@@ -85,6 +100,37 @@
                   />
                 </v-menu>
               </v-col>
+              <v-col cols="12" class="py-0">
+                <div class="item-header">
+                  資料
+                  <span class="sub-header">
+                    資料がある場合は名前とURLを入力してください
+                  </span>
+                </div>
+              </v-col>
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  outlined
+                  v-model="refName"
+                  color="success"
+                  label="資料の名前"
+                  dense
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  outlined
+                  v-model="refURL"
+                  color="success"
+                  label="資料のURL"
+                  dense
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-btn color="success" block>
+                  SUBMIT
+                </v-btn>
+              </v-col>
             </v-row>
           </v-container>
         </v-form>
@@ -93,6 +139,8 @@
   </v-row>
 </template>
 <script>
+import { required, url, minLength } from "vuelidate/lib/validators";
+
 export default {
   data: function() {
     return {
@@ -121,12 +169,35 @@ export default {
       campCode: "",
       fromDate: "",
       toDate: "",
-
-      rules: {
-        code: [val => (val.length > 0 ? val : "入力必須項目です")]
-      }
+      refName: "",
+      refURL: ""
     };
+  },
+  validations: {
+    campCode: {
+      required
+    },
+    refURL: {
+      url
+    }
   },
   computed: {}
 };
 </script>
+<style lang="scss" scoped>
+.item-header {
+  font-size: 1.2rem;
+  text-align: left;
+  border-left: 6px solid #002566;
+  font-weight: bold;
+  padding-left: 5px;
+  margin-bottom: 10px;
+  .sub-header {
+    font-weight: 200;
+    margin-top: -3px;
+    display: block;
+    font-size: 0.7rem;
+    color: rgb(58, 58, 58);
+  }
+}
+</style>
