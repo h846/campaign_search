@@ -1,203 +1,151 @@
 <template>
-  <v-row no-gutters justify="center" class="mt-8">
-    <v-col align="center">
-      <v-card max-width="400" class="pa-2" outlined>
-        <v-card-title>キャンペーン追加</v-card-title>
-        <v-form>
-          <v-container>
-            <v-row>
-              <v-col cols="12" class="py-0 mb-3">
-                <div class="item-header">
-                  キャンペーン種別
-                  <span class="sub-header">
-                    キャンペーンの種別を一覧から選択してください。
-                  </span>
-                </div>
-                <v-select
-                  outlined
-                  color="success"
-                  v-model="selectTypes"
-                  :items="types"
-                  item-text="label"
-                  item-value="value"
-                  label="種別"
-                  return-object
-                  single-line
-                  persistent-hint
-                  dense
-                  :hide-details="true"
-                ></v-select>
-              </v-col>
-              <v-col cols="12" class="py-0 mb-3">
-                <div class="item-header">
-                  キャンペーンコード
-                  <span class="sub-header">
-                    キャンペーンコードを入力してください。
-                  </span>
-                </div>
-                <v-text-field
-                  outlined
-                  v-model="$v.campCode.$model"
-                  color="success"
-                  label="キャンペーンコード"
-                  :hide-details="true"
-                  dense
-                ></v-text-field>
-                <div
-                  class="text-left red--text my-0 py-0"
-                  v-if="$v.campCode.$error"
-                >
-                  性別を選択してください。
-                </div>
-              </v-col>
-              <v-col cols="12" class="py-0">
-                <div class="item-header">
-                  キャンペーン期間
-                  <span class="sub-header">
-                    キャンペーンの有効期間を入力してください
-                  </span>
-                </div>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <v-menu max-width="290px" min-width="290px" offset-y>
-                  <!-- ポップアップを追加する要素にv-on="on" -->
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      slot="activator"
-                      v-model="fromDate"
-                      label="開始日"
-                      readonly
-                      v-on="on"
-                    />
-                  </template>
-                  <!-- ポップアップされる内容-->
-                  <v-date-picker
-                    v-model="fromDate"
-                    locale="jp-ja"
-                    :day-format="date => new Date(date).getDate()"
-                    no-title
-                  />
-                </v-menu>
-              </v-col>
-              <v-col cols="6" class="py-0">
-                <v-menu offset-y>
-                  <!-- ポップアップを追加する要素にv-on="on" -->
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      slot="activator"
-                      v-model="toDate"
-                      label="終了日"
-                      readonly
-                      v-on="on"
-                    />
-                  </template>
-                  <!-- ポップアップされる内容-->
-                  <v-date-picker
-                    v-model="toDate"
-                    locale="jp-ja"
-                    :day-format="date => new Date(date).getDate()"
-                    no-title
-                  />
-                </v-menu>
-              </v-col>
-              <v-col cols="12" class="py-0">
-                <div class="item-header">
-                  資料
-                  <span class="sub-header">
-                    資料がある場合は名前とURLを入力してください
-                  </span>
-                </div>
-              </v-col>
-              <v-col cols="12" class="py-0">
-                <v-text-field
-                  outlined
-                  v-model="refName"
-                  color="success"
-                  label="資料の名前"
-                  dense
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" class="py-0">
-                <v-text-field
-                  outlined
-                  v-model="refURL"
-                  color="success"
-                  label="資料のURL"
-                  dense
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-btn color="success" block>
-                  SUBMIT
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-form>
+  <v-container style="width:500px;">
+    <v-stepper v-model="stepper">
+      <v-stepper-header>
+        <v-stepper-step :complete="stepper > 1" step="1">
+          キャンペーン情報
+        </v-stepper-step>
+
+        <v-divider></v-divider>
+
+        <v-stepper-step :complete="stepper > 2" step="2">
+          詳細情報
+        </v-stepper-step>
+
+        <v-divider></v-divider>
+
+        <v-stepper-step step="3">
+          使用条件
+        </v-stepper-step>
+      </v-stepper-header>
+
+      <v-stepper-items class="pb-5">
+        <v-stepper-content step="1">
+          <!--キャンペーン情報コンポーネント-->
+          <campaign ref="campcompo" />
+          <div style="text-align:center;">
+            <v-btn
+              color="primary"
+              width="340px"
+              @click="
+                stepper = 2;
+                trgSetCampInfo();
+              "
+            >
+              次へ
+            </v-btn>
+          </div>
+        </v-stepper-content>
+
+        <v-stepper-content step="2">
+          <!-- 詳細情報コンポーネント -->
+          <camp-detail ref="detailcompo" @go-to-next="stepper = 3" />
+
+          <div style="text-align:center;">
+            <v-btn width="140" class="mr-6" @click="stepper = 1">
+              戻る
+            </v-btn>
+            <v-btn
+              color="primary"
+              width="140"
+              class="ml-6"
+              @click="trgSetDetail()"
+            >
+              次へ
+            </v-btn>
+          </div>
+        </v-stepper-content>
+
+        <v-stepper-content step="3">
+          <!-- 条件コンポーネント -->
+          <camp-condition
+            ref="conditioncompo"
+            @proceed-regist="registratoin()"
+          />
+
+          <div style="text-align:center;">
+            <v-btn width="140" class="mr-6" @click="stepper = 2">
+              戻る
+            </v-btn>
+            <v-btn
+              color="primary"
+              width="140"
+              class="ml-6"
+              @click="trgSetCondition()"
+            >
+              登録
+            </v-btn>
+          </div>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
+    <!-- Regist Comfirm Dialog -->
+    <v-dialog v-model="dialog" persistent>
+      <v-card>
+        <v-card-title class="text-h5">
+          以下の内容で登録します。よろしいですか？
+        </v-card-title>
+        <v-list two-line subheader>
+          <v-list-item v-for="(item, k, i) in campInfo" :key="i">
+            <v-list-item-content>
+              <v-list-item-title>{{ item }}</v-list-item-title>
+              <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-card-actions>
+          <v-btn color="primary">登録する</v-btn>
+          <v-btn @click="dialog = false">キャンセル</v-btn>
+        </v-card-actions>
       </v-card>
-    </v-col>
-  </v-row>
+    </v-dialog>
+  </v-container>
 </template>
 <script>
-import { required, url, minLength } from "vuelidate/lib/validators";
+import campaign from "@/components/admin/steppers/campagin.vue";
+import campDetail from "@/components/admin/steppers/camp-detail.vue";
+import campCondition from "@/components/admin/steppers/camp-condition.vue";
 
 export default {
+  components: {
+    campaign,
+    campDetail,
+    campCondition
+  },
   data: function() {
     return {
-      selectTypes: { label: "カタログ", value: "カタログ" },
-      types: [
-        { label: "カタログ", value: "カタログ" },
-        { label: "ニュースレター", value: "ニュースレター" },
-        { label: "荷物同梱", value: "荷物同梱" },
-        { label: "雑誌", value: "雑誌" },
-        { label: "WEB", value: "WEB" },
-        { label: "LINE", value: "LINE" },
-        { label: "バースデープラス", value: "birthdayPlus" },
-        { label: "プレミアムプラス", value: "premiumPlus" },
-        { label: "Facebook", value: "FACEBOOK" },
-        { label: "FAX", value: "FAX" },
-        { label: "Instagram", value: "INSTAGRAM" },
-        { label: "新聞", value: "NP" },
-        { label: "新聞広告", value: "NPAD" },
-        { label: "折込チラシ", value: "NPI" },
-        { label: "テレビ通販", value: "TV通販" },
-        { label: "X-ing Gate", value: "XGate" },
-        { label: "お祝い", value: "お祝い" },
-        { label: "お詫び", value: "お詫び" },
-        { label: "リサイクル", value: "リサイクル" }
-      ],
-      campCode: "",
-      fromDate: "",
-      toDate: "",
-      refName: "",
-      refURL: ""
+      stepper: 1,
+      dialog: false,
+      campInfo: {}
     };
   },
-  validations: {
-    campCode: {
-      required
+  methods: {
+    trgSetCampInfo() {
+      this.$refs.campcompo.setCampInfo();
     },
-    refURL: {
-      url
+    trgSetDetail() {
+      this.$refs.detailcompo.setDetails();
+    },
+    trgSetCondition() {
+      this.$refs.conditioncompo.setConditions();
+    },
+    registratoin() {
+      this.campInfo = {
+        キャンペーン種別: this.$store.state.campType,
+        キャンペーンコード: this.$store.state.campCode,
+        開始日: this.$store.dateStart,
+        終了日: this.$store.dateEnd,
+        キャンペーン概要: this.$store.summary,
+        取得方法: this.$store.getMethod,
+        参考資料: this.$store.ref,
+        参考資料URL: this.$store.refURL,
+        送料無料: this.$store.freeShip,
+        条件1: this.$store.condition1,
+        条件2: this.$store.condition2
+      };
+
+      this.dialog = true;
     }
-  },
-  computed: {}
+  }
 };
 </script>
-<style lang="scss" scoped>
-.item-header {
-  font-size: 1.2rem;
-  text-align: left;
-  border-left: 6px solid #002566;
-  font-weight: bold;
-  padding-left: 5px;
-  margin-bottom: 10px;
-  .sub-header {
-    font-weight: 200;
-    margin-top: -3px;
-    display: block;
-    font-size: 0.7rem;
-    color: rgb(58, 58, 58);
-  }
-}
-</style>
