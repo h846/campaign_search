@@ -86,9 +86,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Laoding Overlay-->
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <!-- Complete Snackbar-->
+    <v-snackbar v-model="snackbar" :timeout="3000">
+      <span>登録完了しました！</span>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          閉じる
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
+import axios from 'axios';
+
 import campaign from '@/components/admin/steppers/campagin.vue';
 import campDetail from '@/components/admin/steppers/camp-detail.vue';
 import campCondition from '@/components/admin/steppers/camp-condition.vue';
@@ -104,6 +119,8 @@ export default {
       stepper: 1,
       dialog: false,
       campInfo: {},
+      overlay: false,
+      snackbar: false,
     };
   },
   methods: {
@@ -118,7 +135,7 @@ export default {
     },
     comfirm() {
       this.campInfo = {
-        キャンペーン種別: this.$store.state.campType,
+        キャンペーン種別: `'${this.$store.state.campType}'`,
         キャンペーンコード: this.$store.state.campCode,
         開始日: this.$store.state.dateStart,
         終了日: this.$store.state.dateEnd,
@@ -134,18 +151,36 @@ export default {
       this.dialog = true;
     },
     registration() {
-      this.campInfo['特典内容'] = this.campInfo['特典内容'].join(',');
-      this.campInfo['使用条件'] = this.campInfo['使用条件'].join(',');
+      this.dialog = false;
+      this.overlay = true;
+      this.campInfo['特典内容'] = this.campInfo['特典内容'].join();
+      this.campInfo['使用条件'] = this.campInfo['使用条件'].join();
       this.campInfo['参考資料'] = this.campInfo['参考資料'] + ',' + this.campInfo['参考資料URL'];
       delete this.campInfo['参考資料URL'];
 
       let cols =
-        '(種別, コード, 開始日, 終了日, 概要, 取得方法, 特典内容, 使用条件1, 使用条件2, 資料)';
-      let vals = Object.values(this.campInfo).join(',');
+        '(種別, コード, 開始日, 終了日, 概要, 取得方法, 資料, 特典内容, 使用条件1, 使用条件2)';
+      let vals = Object.values(this.campInfo);
+      vals = vals.reduce((a, b) => {
+        return `${a},` + `'${b}'`;
+      });
       vals = `(${vals})`;
 
       let sql = `INSERT INTO \`campaign_data_test\` ${cols} VALUES ${vals};`;
       console.log(sql);
+      axios
+        .post('http://lejnet/api/accdb', {
+          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+          sql: sql,
+        })
+        .then(res => {
+          this.overlay = false;
+          this.snackbar = true;
+          this.$router.push('/');
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
   },
 };
