@@ -76,45 +76,45 @@
   </v-card>
 </template>
 <script>
-import { required, url } from "vuelidate/lib/validators";
+import { required, url } from 'vuelidate/lib/validators';
 
 export default {
   data: function() {
     return {
-      summary: "",
-      errMsg: "",
-      errMsgURL: "",
-      getMethod: "",
-      refName: "",
-      refURL: ""
+      summary: '',
+      errMsg: '',
+      errMsgURL: '',
+      getMethod: '',
+      refName: '',
+      refURL: '',
     };
   },
   validations: {
     summary: {
-      required
+      required,
     },
     refURL: {
-      url
-    }
+      url,
+    },
   },
   methods: {
     setDetails() {
       console.log(this.$v.summary.$invalid);
       if (this.$v.summary.$invalid) {
-        this.errMsg = "入力してください";
+        this.errMsg = '入力してください';
       } else if (this.$v.refURL.$invalid) {
-        this.errMsgURL = "正しいURLの形式を入力してください";
+        this.errMsgURL = '正しいURLの形式を入力してください';
       } else {
         let obj = {};
         obj.summary = this.summary;
         obj.getMethod = this.getMethod;
         obj.ref = this.refName;
         obj.refURL = this.refURL;
-        this.$store.commit("setDetails", obj);
-        this.$emit("go-to-next");
+        this.$store.commit('setDetails', obj);
+        this.$emit('go-to-next');
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

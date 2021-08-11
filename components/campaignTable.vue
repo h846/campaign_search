@@ -27,48 +27,46 @@
       <!-- Custom Cols -->
       <template v-slot:[`item.ref`]="{ item }">
         <div v-for="(i, idx) in item.ref" :key="idx">
-          <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
-            item.ref[idx]
-          }}</a>
+          <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{ item.ref[idx] }}</a>
         </div>
       </template>
       <template v-slot:[`item.isExpired`]="{ item }">
-        <v-chip
-          v-if="item.isExpired"
-          class="my-2"
-          small
-          color="red"
-          text-color="white"
+        <v-chip v-if="item.isExpired" class="my-2" small color="red" text-color="white"
           >期限切れ</v-chip
         >
       </template>
       <!-- Expand -->
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length" class="pa-5 ">
-          <div>
+          <div class="mb-1">
             種類:
-            <span class="font-weight-bold">{{ item["種別"] }}</span>
+            <span class="font-weight-bold ml-1">{{ item['種別'] }}</span>
           </div>
-          <div>
+          <div class="mb-1">
             取得方法:
-            <span class="font-weight-bold">{{ item["取得方法"] }}</span>
+            <span class="font-weight-bold ml-1">{{ item['取得方法'] }}</span>
           </div>
-          <div v-if="!!item['特典内容']" class="red--text text--lighten-1">
-            送料無料
-          </div>
-          <div v-if="!!item['使用条件1']">
-            使用条件1:
+          <div v-if="!!item.benefits" class="mb-1">
+            特典内容:
             <v-chip
-              v-for="(i, k) in item.conditions"
+              small
+              color="success"
+              v-for="(benefit, k) in item.benefits"
               :key="k"
-              class="ml-2"
-              color="primary"
-              >{{ i }}</v-chip
+              class="ml-1"
             >
+              {{ benefit }}
+            </v-chip>
+          </div>
+          <div v-if="!!item['使用条件1']" class="mb-1">
+            使用条件:
+            <v-chip v-for="(i, k) in item.conditions" :key="k" small color="primary" class="ml-1">{{
+              i
+            }}</v-chip>
           </div>
           <div v-if="!!item['使用条件2']">
-            使用条件2:
-            <span class="font-weight-bold">{{ item["使用条件2"] }}</span>
+            特記事項:
+            <span class="font-weight-bold">{{ item['使用条件2'] }}</span>
           </div>
         </td>
       </template>
@@ -86,22 +84,22 @@ export default {
       list: [],
       page: 1,
       pageCount: 0,
-      search: "",
+      search: '',
       headers: [
-        { text: "", value: "isExpired", sortable: false },
-        { text: "詳細", value: "data-table-expand" },
-        { text: "概要", value: "概要", sortable: false },
-        { text: "コード", value: "コード", sortable: false },
-        { text: "資料", value: "ref", sortable: false },
-        { text: "開始日", value: "開始日" },
-        { text: "終了日", value: "終了日" }
+        { text: '', value: 'isExpired', sortable: false },
+        { text: '詳細', value: 'data-table-expand' },
+        { text: '概要', value: '概要', sortable: false },
+        { text: 'コード', value: 'コード', sortable: false },
+        { text: '資料', value: 'ref', sortable: false },
+        { text: '開始日', value: '開始日' },
+        { text: '終了日', value: '終了日' },
       ],
-      expanded: []
+      expanded: [],
     };
   },
   methods: {
     validDate: function(arg) {
-      let now = this.$moment().format("YYYY-MM-DD");
+      let now = this.$moment().format('YYYY-MM-DD');
       let endDate = this.$moment(arg);
       return endDate.isBefore(now);
     },
@@ -109,22 +107,28 @@ export default {
       //リスト整形処理
       let list = this.campaignList.map((val, idx) => {
         //format date
-        val["終了日"] = this.$moment(val["終了日"]).format("YYYY-MM-DD");
+        val['終了日'] = this.$moment(val['終了日']).format('YYYY-MM-DD');
         // If the campaign period has already expired, flag it.
-        if (this.validDate(val["終了日"])) {
-          val["isExpired"] = true;
+        if (this.validDate(val['終了日'])) {
+          val['isExpired'] = true;
         } else {
-          val["isExpired"] = false;
+          val['isExpired'] = false;
         }
-        val["終了日"] = String(val["終了日"]).replace(/-/g, "/");
+        val['終了日'] = String(val['終了日']).replace(/-/g, '/');
         //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         //カンマ、改行コード、スペースを除去して切り分ける
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
-        let tmp = String(val["資料"]).split(/[,\s\r\n]/g);
+        let tmp = String(val['資料']).split(/[,\s\r\n]/g);
         //空文字除去
         val.ref = tmp.filter(val => !!val);
-        //使用条件1整形
-        val.conditions = String(val["使用条件1"]).split(",");
+        //特典内容整形
+        if (!!val['特典内容']) {
+          val.benefits = String(val['特典内容']).split(',');
+        } else {
+          val.benefits = '';
+        }
+        //使用条件整形
+        val.conditions = String(val['使用条件1']).split(',');
         //ID付与
         val.ID = idx;
 
@@ -133,21 +137,21 @@ export default {
 
       // Sort by date
       list = list.sort((a, b) => {
-        if (a["終了日"] > b["終了日"]) {
+        if (a['終了日'] > b['終了日']) {
           return -1;
         } else {
           return 1;
         }
       });
       this.list = list;
-      this.$emit("loaded");
-    }
+      this.$emit('loaded');
+    },
   },
   watch: {
     campaignList: function() {
       this.rtnList();
-    }
-  }
+    },
+  },
 };
 </script>
 

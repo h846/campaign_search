@@ -110,31 +110,31 @@
 export default {
   data: function() {
     return {
-      selectTypes: { label: "カタログ", value: "カタログ" },
+      selectTypes: { label: 'カタログ', value: 'カタログ' },
       types: [
-        { label: "カタログ", value: "カタログ" },
-        { label: "ニュースレター", value: "ニュースレター" },
-        { label: "荷物同梱", value: "荷物同梱" },
-        { label: "雑誌", value: "雑誌" },
-        { label: "WEB", value: "WEB" },
-        { label: "LINE", value: "LINE" },
-        { label: "バースデープラス", value: "birthdayPlus" },
-        { label: "プレミアムプラス", value: "premiumPlus" },
-        { label: "Facebook", value: "FACEBOOK" },
-        { label: "FAX", value: "FAX" },
-        { label: "Instagram", value: "INSTAGRAM" },
-        { label: "新聞", value: "NP" },
-        { label: "新聞広告", value: "NPAD" },
-        { label: "折込チラシ", value: "NPI" },
-        { label: "テレビ通販", value: "TV通販" },
-        { label: "X-ing Gate", value: "XGate" },
-        { label: "お祝い", value: "お祝い" },
-        { label: "お詫び", value: "お詫び" },
-        { label: "リサイクル", value: "リサイクル" }
+        { label: 'カタログ', value: 'カタログ' },
+        { label: 'ニュースレター', value: 'ニュースレター' },
+        { label: '荷物同梱', value: '荷物同梱' },
+        { label: '雑誌', value: '雑誌' },
+        { label: 'WEB', value: 'WEB' },
+        { label: 'LINE', value: 'LINE' },
+        { label: 'バースデープラス', value: 'birthdayPlus' },
+        { label: 'プレミアムプラス', value: 'premiumPlus' },
+        { label: 'Facebook', value: 'FACEBOOK' },
+        { label: 'FAX', value: 'FAX' },
+        { label: 'Instagram', value: 'INSTAGRAM' },
+        { label: '新聞', value: 'NP' },
+        { label: '新聞広告', value: 'NPAD' },
+        { label: '折込チラシ', value: 'NPI' },
+        { label: 'テレビ通販', value: 'TV通販' },
+        { label: 'X-ing Gate', value: 'XGate' },
+        { label: 'お祝い', value: 'お祝い' },
+        { label: 'お詫び', value: 'お詫び' },
+        { label: 'リサイクル', value: 'リサイクル' },
       ],
-      campCode: "",
-      fromDate: "",
-      toDate: ""
+      campCode: '',
+      fromDate: '',
+      toDate: '',
     };
   },
   computed: {},
@@ -145,9 +145,9 @@ export default {
       obj.code = this.campCode;
       obj.startDate = this.fromDate;
       obj.endDate = this.toDate;
-      this.$store.commit("setCampInfo", obj);
-    }
-  }
+      this.$store.commit('setCampInfo', obj);
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

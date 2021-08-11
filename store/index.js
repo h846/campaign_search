@@ -7,9 +7,9 @@ export const state = () => ({
   getMethod: "",
   ref: "",
   refURL: "",
-  freeShip: false,
-  condition1: [],
-  condition2: ""
+  benefits: [],
+  conditions: [],
+  remarks: ""
 })
 
 export const mutations = {
@@ -26,8 +26,8 @@ export const mutations = {
     state.refURL = details.refURL;
   },
   setConditions(state, conditions) {
-    state.freeShip = conditions.freeShip;
-    state.condition1 = conditions.condition1;
-    state.condition2 = conditions.condition2;
+    state.conditions = conditions.conditions;
+    state.benefits = conditions.benefits;
+    state.remarks = conditions.remarks;
   }
 }

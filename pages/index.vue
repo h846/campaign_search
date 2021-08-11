@@ -59,7 +59,7 @@ export default {
       searchItems: {
         campaignType: {
           //テーブル列名:DB上の列名
-          "カタログ ": "カタログ",
+          カタログ: "カタログ",
           荷物同梱: "荷物同梱",
           "PREMIUM PLUS": "premiumPlus",
           "BIRTH DAY PLUS": "birthdayPlus",
