@@ -9,7 +9,7 @@ export const state = () => ({
   refURL: "",
   benefits: [],
   conditions: [],
-  remarks: ""
+  remarks: "",
 })
 
 export const mutations = {

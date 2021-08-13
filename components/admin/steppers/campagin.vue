@@ -137,7 +137,7 @@ export default {
       toDate: '',
     };
   },
-  computed: {},
+  created() {},
   methods: {
     setCampInfo() {
       let obj = {};

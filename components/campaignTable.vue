@@ -68,6 +68,38 @@
             特記事項:
             <span class="font-weight-bold">{{ item['使用条件2'] }}</span>
           </div>
+          <!-- 以下アドミンモード時に表示 -->
+
+          <div v-if="adminMode == true" class="mt-10">
+            <!-- 編集ボタン -->
+            <v-btn color="info" class="mr-5" @click="edit(item['campaign_data_test.ID'])"
+              >編集</v-btn
+            >
+            <!-- 削除ボタン -->
+            <v-dialog v-model="dialogRemove" width="350">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="error" dark v-bind="attrs" v-on="on">
+                  削除
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="text-h5 white--text red lighten-2">
+                  削除してよろしいですか？
+                </v-card-title>
+
+                <v-card-actions>
+                  <v-btn
+                    x-large
+                    class="mx-auto my-10"
+                    color="error"
+                    @click="remove(item['campaign_data_test.ID'])"
+                  >
+                    削除する
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
         </td>
       </template>
     </v-data-table>
@@ -77,8 +109,10 @@
   </v-card>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
-  props: { campaignList: Array, loading: Boolean },
+  props: { campaignList: Array, loading: Boolean, adminMode: Boolean },
   data: function() {
     return {
       list: [],
@@ -95,6 +129,8 @@ export default {
         { text: '終了日', value: '終了日' },
       ],
       expanded: [],
+      dialogEdit: false,
+      dialogRemove: false,
     };
   },
   methods: {
@@ -129,7 +165,7 @@ export default {
         }
         //使用条件整形
         val.conditions = String(val['使用条件1']).split(',');
-        //ID付与
+        //ID付与(for Expand)
         val.ID = idx;
 
         return val;
@@ -145,6 +181,33 @@ export default {
       });
       this.list = list;
       this.$emit('loaded');
+    },
+    edit(campID) {
+      /*
+      
+      
+      
+      
+      ここから実装する
+      
+      
+      
+      
+      */
+      alert(campID);
+    },
+    remove(campID) {
+      let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;
+      axios
+        .post('http://lejnet/api/accdb/', {
+          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+          sql: sql,
+        })
+        .then(res => {
+          this.dialogRemove = false;
+          this.$emit('reloadlist');
+        })
+        .catch(err => console.log(err));
     },
   },
   watch: {

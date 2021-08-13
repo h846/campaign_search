@@ -1,5 +1,6 @@
 <template>
   <v-container style="width:500px;">
+    <h1>{{ title }}</h1>
     <v-stepper v-model="stepper">
       <v-stepper-header>
         <v-stepper-step :complete="stepper > 1" step="1">
@@ -116,12 +117,16 @@ export default {
   },
   data: function() {
     return {
+      title: '',
       stepper: 1,
       dialog: false,
       campInfo: {},
       overlay: false,
       snackbar: false,
     };
+  },
+  created() {
+    this.title = '更新・削除';
   },
   methods: {
     trgSetCampInfo() {

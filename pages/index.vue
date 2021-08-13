@@ -31,7 +31,13 @@
       </v-chip-group>
     </v-col>
     <v-col cols="12">
-      <campaign-table :campaign-list="dataList" :loading="loading" @loaded="loaded" />
+      <campaign-table
+        :admin-mode="adminMode"
+        :campaign-list="dataList"
+        :loading="loading"
+        @loaded="loaded"
+        @reloadlist="reloadlist"
+      />
     </v-col>
   </v-row>
 </template>
@@ -41,6 +47,7 @@ import axios from 'axios';
 import CampaignTable from '~/components/campaignTable.vue';
 
 export default {
+  props: ['adminMode'],
   components: {
     CampaignTable,
   },
@@ -96,20 +103,22 @@ export default {
     },
     search: function() {
       let item = this.searchItem;
-      let reg = /off$/;
 
       if (item == undefined) {
         this.dataList = this.originalList;
-      } else if (item == '送料無料') {
-        this.dataList = this.originalList.filter(val => val['特典内容'] === '送料無料');
-      } else if (reg.test(item)) {
-        this.dataList = this.originalList.filter(val => val.conditions.some(val => val == item));
       } else {
-        this.dataList = this.originalList.filter(val => val['種別'] === item);
+        this.dataList = this.originalList.filter(val => {
+          for (let key of Object.keys(val)) {
+            if (String(val[key]).indexOf(item) !== -1) return true;
+          }
+        });
       }
     },
     loaded: function() {
       this.loading = false;
+    },
+    reloadlist() {
+      this.getCampaignData();
     },
   },
   watch: {
