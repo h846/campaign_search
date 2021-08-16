@@ -19,7 +19,7 @@
         </template>
         <img class="image" src="~/assets/img/flowchart.png" />
       </v-dialog>
-      <v-btn to="admin/create" text color="primary">管理者用ページ</v-btn>
+      <v-btn text color="primary" to="/admin/create">管理者用ページ</v-btn>
     </v-app-bar>
     <v-main>
       <v-container>

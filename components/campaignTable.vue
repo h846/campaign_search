@@ -83,19 +83,20 @@
                 </v-btn>
               </template>
               <v-card>
-                <v-card-title class="text-h5 white--text red lighten-2">
-                  削除してよろしいですか？
+                <v-card-title class="text-h7 white--text red lighten-2">
+                  削除してもよろしいですか？
                 </v-card-title>
 
-                <v-card-actions>
+                <v-card-actions class="py-10">
                   <v-btn
                     x-large
-                    class="mx-auto my-10"
+                    class="mx-auto"
                     color="error"
                     @click="remove(item['campaign_data_test.ID'])"
                   >
                     削除する
                   </v-btn>
+                  <v-btn x-large class="mx-auto" @click="dialogRemove = false">キャンセル</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -145,26 +146,17 @@ export default {
         //format date
         val['終了日'] = this.$moment(val['終了日']).format('YYYY-MM-DD');
         // If the campaign period has already expired, flag it.
-        if (this.validDate(val['終了日'])) {
-          val['isExpired'] = true;
-        } else {
-          val['isExpired'] = false;
-        }
+        val.isExpired = this.validDate(val['終了日']);
         val['終了日'] = String(val['終了日']).replace(/-/g, '/');
-        //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
-        //カンマ、改行コード、スペースを除去して切り分ける
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
+        //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         let tmp = String(val['資料']).split(/[,\s\r\n]/g);
         //空文字除去
         val.ref = tmp.filter(val => !!val);
         //特典内容整形
-        if (!!val['特典内容']) {
-          val.benefits = String(val['特典内容']).split(',');
-        } else {
-          val.benefits = '';
-        }
+        val.benefits = String(val['特典内容']) == '' ? '' : String(val['特典内容']).split(',');
         //使用条件整形
-        val.conditions = String(val['使用条件1']).split(',');
+        val.conditions = String(val['使用条件1']) == '' ? '' : String(val['使用条件1']).split(',');
         //ID付与(for Expand)
         val.ID = idx;
 
