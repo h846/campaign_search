@@ -71,11 +71,31 @@
           <!-- 以下アドミンモード時に表示 -->
 
           <div v-if="adminMode == true" class="mt-10">
-            <!-- 編集ボタン -->
-            <v-btn color="info" class="mr-5" @click="edit(item['campaign_data_test.ID'])"
-              >編集</v-btn
-            >
-            <!-- 削除ボタン -->
+            <!-- 編集ボタン & ダイアログ-->
+            <v-dialog v-model="dialogEdit" width="500">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="info"
+                  class="mr-5"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="edit(item['campaign_data_test.ID'])"
+                  >編集</v-btn
+                >
+              </template>
+              <v-card>
+                <v-card-title
+                  >キャンペーンID: {{ item['campaign_data_test.ID'] }}を編集中</v-card-title
+                >
+                <!-- Edit Form -->
+                <!-- ここから作成 -->
+                <v-form>
+                  <v-text-field></v-text-field>
+                </v-form>
+              </v-card>
+            </v-dialog>
+
+            <!-- 削除ボタン & ダイアログ-->
             <v-dialog v-model="dialogRemove" width="350">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn color="error" dark v-bind="attrs" v-on="on">
@@ -132,6 +152,95 @@ export default {
       expanded: [],
       dialogEdit: false,
       dialogRemove: false,
+      //for Edit Form
+      forms: {
+        type: '',
+        code: '',
+        startDate: '',
+        endDate: '',
+        summury: '',
+        getMethod: '',
+        benefits: [
+          '送料無料',
+          '裾上げ無料',
+          '5%OFF',
+          '10%OFF',
+          '15%OFF',
+          '20%OFF',
+          '25%OFF',
+          '30%OFF',
+          '40%OFF',
+          '500円OFF',
+          '1000円OFF',
+          '1500円OFF',
+          '2000円OFF',
+          '2500円OFF',
+          '3000円OFF',
+          '4000円OFF',
+          '5000円OFF',
+        ],
+        conditions: {
+          price: [
+            'クーポン金額以上',
+            '加工送料含まない',
+            '電話OK',
+            '2000円以上',
+            '3000円以上',
+            '4000円以上',
+            '5000円以上',
+            '6000円以上',
+            '7000円以上',
+            '7500円以上',
+            '8000円以上',
+            '9000円以上',
+            '10000円以上',
+            '12000円以上',
+            '15000円以上',
+            '20000円以上',
+          ],
+          situation: [
+            'Sale・楽替可否不要',
+            'SALE NG',
+            'SALE OK',
+            '楽替からNG',
+            '楽替からOK',
+            '1回のみ',
+            '初回のみ',
+            '2回目のみ',
+            'レディスのみ',
+            'メンズのみ',
+            'お友達紹介',
+            'WEB専用',
+            'セールONLY',
+            '〒郵送',
+            '対象商品',
+            '楽天市場専用',
+            '1点のみ',
+          ],
+          xing: [
+            '1月まで購入分',
+            '2月まで購入分',
+            '3月まで購入分',
+            '4月まで購入分',
+            '5月まで購入分',
+            '6月まで購入分',
+            '7月まで購入分',
+            '8月まで購入分',
+            '9月まで購入分',
+            '10月まで購入分',
+            '11月まで購入分',
+            '12月まで購入分',
+            'X-ing Cat.12',
+            'X-ing Cat.17',
+            'X-ing Cat.53',
+            'X-ing 対象購入',
+            'X-ing 対象商品',
+          ],
+        },
+        remark: '',
+        refs: [],
+        isDisplay: true,
+      },
     };
   },
   methods: {
@@ -175,18 +284,11 @@ export default {
       this.$emit('loaded');
     },
     edit(campID) {
+      console.log(this.list);
       /*
-      
-      
-      
-      
       ここから実装する
-      
-      
-      
-      
       */
-      alert(campID);
+      //alert(campID);
     },
     remove(campID) {
       let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;

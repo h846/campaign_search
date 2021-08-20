@@ -47,7 +47,6 @@ import axios from 'axios';
 import CampaignTable from '~/components/campaignTable.vue';
 
 export default {
-  props: ['adminMode'],
   components: {
     CampaignTable,
   },
@@ -80,6 +79,7 @@ export default {
       originalList: [],
       dataList: [],
       loading: false,
+      adminMode: false,
     };
   },
   created() {
@@ -126,6 +126,9 @@ export default {
     searchItem: function() {
       this.search();
     },
+  },
+  mounted() {
+    this.adminMode = this.$store.state.adminMode;
   },
 };
 </script>

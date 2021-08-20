@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-app-bar fixed app dense>
+    <v-app-bar fixed app dense :class="{ appbar: isAdmin }">
       <v-toolbar-title>
         <nuxt-link to="/" style="text-decoration:none;color:#333;"> {{ title }}</nuxt-link>
       </v-toolbar-title>
@@ -19,7 +19,21 @@
         </template>
         <img class="image" src="~/assets/img/flowchart.png" />
       </v-dialog>
-      <v-btn text color="primary" to="/admin/create">管理者用ページ</v-btn>
+      <!-- Admin page -->
+      <div v-if="isAdmin">
+        <v-menu transition="slide-y-transition" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary" dark text class="red--text" v-bind="attrs" v-on="on">
+              管理者モードON
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-btn text to="/admin/create">新規作成</v-btn>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -38,7 +52,11 @@ export default {
   data() {
     return {
       title: 'キャンペーン検索',
+      isAdmin: '',
     };
+  },
+  mounted() {
+    this.isAdmin = this.$store.state.adminMode;
   },
 };
 </script>
@@ -46,5 +64,9 @@ export default {
 .image {
   width: 600px;
   height: auto;
+}
+
+.appbar {
+  background-color: #ffebee !important;
 }
 </style>

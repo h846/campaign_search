@@ -1,4 +1,5 @@
 export const state = () => ({
+  adminMode: false,
   campType: "",
   campCode: "",
   dateStart: "",
@@ -29,5 +30,8 @@ export const mutations = {
     state.conditions = conditions.conditions;
     state.benefits = conditions.benefits;
     state.remarks = conditions.remarks;
+  },
+  setAdminMode(state) {
+    state.adminMode = true;
   }
 }

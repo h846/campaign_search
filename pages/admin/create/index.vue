@@ -125,15 +125,7 @@ export default {
       snackbar: false,
     };
   },
-  created() {
-    let page = this.$route.params.edit;
-    // 更新ページだった場合
-    if (page == 'update') {
-      this.title = '更新・削除';
-    } else if (page == 'create') {
-      this.title = '新規作成';
-    }
-  },
+  created() {},
   methods: {
     trgSetCampInfo() {
       this.$refs.campcompo.setCampInfo();
