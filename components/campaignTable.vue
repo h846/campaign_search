@@ -69,7 +69,6 @@
             <span class="font-weight-bold">{{ item['使用条件2'] }}</span>
           </div>
           <!-- 以下アドミンモード時に表示 -->
-
           <div v-if="adminMode == true" class="mt-10">
             <!-- 編集ボタン & ダイアログ-->
             <v-dialog v-model="dialogEdit" width="500">
@@ -89,8 +88,217 @@
                 >
                 <!-- Edit Form -->
                 <!-- ここから作成 -->
-                <v-form>
-                  <v-text-field></v-text-field>
+                <v-form id="edit-form">
+                  <v-select
+                    v-model="forms.selectTypes"
+                    :items="forms.types"
+                    item-text="label"
+                    item-value="value"
+                    return-object
+                    label="種類"
+                    dense
+                    hide-details
+                    outlined
+                    class="mb-5"
+                  ></v-select>
+                  <v-text-field
+                    v-model="forms.code"
+                    label="キャンペーンコード"
+                    outlined
+                    hide-details
+                    dense
+                    class="mb-5"
+                  ></v-text-field>
+                  <v-row no-gutters justify="space-between" class="mb-5">
+                    <v-col cols="12" class="mb-2"
+                      ><div class="heading">キャンペーン期間</div>
+                    </v-col>
+                    <v-col cols="5">
+                      <v-menu max-width="300px" min-width="300px" offset-y>
+                        <!-- ポップアップを追加する要素にv-on="on" -->
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            slot="activator"
+                            v-model="forms.startDate"
+                            label="開始日"
+                            hide-details="auto"
+                            readonly
+                            v-on="on"
+                            class="ma-0 pa-0"
+                          />
+                        </template>
+                        <!-- ポップアップされる内容-->
+                        <v-date-picker
+                          v-model="forms.startDate"
+                          locale="jp-ja"
+                          :day-format="date => new Date(date).getDate()"
+                          no-title
+                        />
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="1" align-self="center">
+                      <v-icon>mdi-arrow-right-bold-outline</v-icon>
+                    </v-col>
+                    <v-col cols="5">
+                      <v-menu offset-y>
+                        <!-- ポップアップを追加する要素にv-on="on" -->
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            slot="activator"
+                            v-model="forms.endDate"
+                            label="終了日"
+                            readonly
+                            hide-details="auto"
+                            v-on="on"
+                            class="ma-0 pa-0 ml-3"
+                          />
+                        </template>
+                        <!-- ポップアップされる内容-->
+                        <v-date-picker
+                          v-model="forms.endDate"
+                          locale="jp-ja"
+                          :day-format="date => new Date(date).getDate()"
+                          no-title
+                        />
+                      </v-menu>
+                    </v-col>
+                  </v-row>
+                  <v-text-field
+                    v-model="forms.summary"
+                    label="概要"
+                    outlined
+                    hide-details
+                    dense
+                    class="mb-5"
+                  ></v-text-field>
+                  <v-textarea
+                    outlined
+                    label="取得方法"
+                    row-height="15"
+                    rows="2"
+                    v-model="forms.getMethod"
+                    class="mb-5"
+                    hide-details
+                  ></v-textarea>
+                  <!-- 特典内容 -->
+                  <div class="heading">特典内容</div>
+                  <v-chip-group light multiple column center-active v-model="forms.selectedBenefit">
+                    <v-chip
+                      filter
+                      outlined
+                      v-for="(i, idx) in forms.benefits"
+                      :key="idx"
+                      :value="i"
+                      >{{ i }}</v-chip
+                    >
+                  </v-chip-group>
+                  <v-divider class="my-3"></v-divider>
+                  <div class="heading">使用条件</div>
+                  <div>金額</div>
+                  <v-chip-group
+                    light
+                    multiple
+                    column
+                    center-active
+                    v-model="forms.selectedCondition"
+                  >
+                    <v-chip
+                      filter
+                      outlined
+                      v-for="(i, idx) in forms.conditions.price"
+                      :key="idx"
+                      :value="i"
+                      >{{ i }}</v-chip
+                    >
+                  </v-chip-group>
+                  <v-divider class="my-3"></v-divider>
+                  <div>状況</div>
+                  <v-chip-group
+                    light
+                    multiple
+                    column
+                    center-active
+                    v-model="forms.selectedCondition"
+                  >
+                    <v-chip
+                      filter
+                      outlined
+                      v-for="(i, idx) in forms.conditions.situation"
+                      :key="idx"
+                      :value="i"
+                      >{{ i }}</v-chip
+                    >
+                  </v-chip-group>
+                  <v-divider class="my-3"></v-divider>
+                  <div>Xing関連</div>
+                  <v-chip-group
+                    light
+                    multiple
+                    column
+                    center-active
+                    v-model="forms.selectedCondition"
+                  >
+                    <v-chip
+                      filter
+                      outlined
+                      v-for="(i, idx) in forms.conditions.xing"
+                      :key="idx"
+                      :value="i"
+                      >{{ i }}</v-chip
+                    >
+                  </v-chip-group>
+                  <v-divider class="my-3"></v-divider>
+                  <!-- 補足情報-->
+                  <div class="heading mb-2">補足情報</div>
+                  <v-textarea
+                    outlined
+                    label="補足情報"
+                    row-height="15"
+                    rows="2"
+                    v-model="forms.remark"
+                    class="mb-5"
+                    hide-details
+                  ></v-textarea>
+                  <!-- 資料 -->
+                  <div class="heading mb-3">資料</div>
+                  <div v-for="(item, idx) in forms.refs" :key="idx">
+                    <div v-if="idx % 2 == 0">
+                      <v-text-field
+                        v-model="forms.refs[idx]"
+                        label="資料名"
+                        outlined
+                        hide-details
+                        dense
+                        class="mb-2"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="forms.refs[idx + 1]"
+                        label="資料URL"
+                        outlined
+                        hide-details
+                        dense
+                        class="mb-6"
+                      ></v-text-field>
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <v-btn @click="addRef" small color="success" dark fab
+                      ><v-icon large>mdi-plus</v-icon></v-btn
+                    >
+                  </div>
+                  <v-divider class="my-5"></v-divider>
+                  <!-- 表示非表示-->
+                  <v-checkbox v-model="forms.isDisplay" label="表示する"></v-checkbox>
+                  <v-divider class="my-5"></v-divider>
+                  <!-- Submit Cancel-->
+                  <v-layout>
+                    <v-flex xs6 class="mx-2">
+                      <v-btn color="success" block>更新</v-btn>
+                    </v-flex>
+                    <v-flex xs6 class="mx-2">
+                      <v-btn block @click="dialogEdit = false">キャンセル</v-btn>
+                    </v-flex>
+                  </v-layout>
                 </v-form>
               </v-card>
             </v-dialog>
@@ -154,12 +362,34 @@ export default {
       dialogRemove: false,
       //for Edit Form
       forms: {
-        type: '',
+        selectTypes: { label: 'カタログ', value: 'カタログ' },
+        types: [
+          { label: 'カタログ', value: 'カタログ' },
+          { label: 'ニュースレター', value: 'ニュースレター' },
+          { label: '荷物同梱', value: '荷物同梱' },
+          { label: '雑誌', value: '雑誌' },
+          { label: 'WEB', value: 'WEB' },
+          { label: 'LINE', value: 'LINE' },
+          { label: 'バースデープラス', value: 'birthdayPlus' },
+          { label: 'プレミアムプラス', value: 'premiumPlus' },
+          { label: 'Facebook', value: 'FACEBOOK' },
+          { label: 'FAX', value: 'FAX' },
+          { label: 'Instagram', value: 'INSTAGRAM' },
+          { label: '新聞', value: 'NP' },
+          { label: '新聞広告', value: 'NPAD' },
+          { label: '折込チラシ', value: 'NPI' },
+          { label: 'テレビ通販', value: 'TV通販' },
+          { label: 'X-ing Gate', value: 'XGate' },
+          { label: 'お祝い', value: 'お祝い' },
+          { label: 'お詫び', value: 'お詫び' },
+          { label: 'リサイクル', value: 'リサイクル' },
+        ],
         code: '',
         startDate: '',
         endDate: '',
         summury: '',
         getMethod: '',
+        selectedBenefit: [],
         benefits: [
           '送料無料',
           '裾上げ無料',
@@ -179,6 +409,7 @@ export default {
           '4000円OFF',
           '5000円OFF',
         ],
+        selectedCondition: [],
         conditions: {
           price: [
             'クーポン金額以上',
@@ -238,7 +469,7 @@ export default {
           ],
         },
         remark: '',
-        refs: [],
+        refs: ['aaa', 'bbb'],
         isDisplay: true,
       },
     };
@@ -285,6 +516,7 @@ export default {
     },
     edit(campID) {
       console.log(this.list);
+      axios.get('http://lejnet/api/accdb/', { params: { db: '', table: '' } });
       /*
       ここから実装する
       */
@@ -303,6 +535,10 @@ export default {
         })
         .catch(err => console.log(err));
     },
+    addRef() {
+      this.forms.refs.push('');
+      this.forms.refs.push('');
+    },
   },
   watch: {
     campaignList: function() {
@@ -316,5 +552,17 @@ export default {
 .v-text-field {
   width: 400px;
   margin: 0 0 0 auto;
+}
+
+#edit-form {
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px 10px;
+}
+
+.heading {
+  font-size: 20px;
+  border-left: 5px solid #002566;
+  padding-left: 5px;
 }
 </style>
