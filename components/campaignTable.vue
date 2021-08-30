@@ -111,7 +111,7 @@
                   ></v-text-field>
                   <v-row no-gutters justify="space-between" class="mb-5">
                     <v-col cols="12" class="mb-2"
-                      ><div class="heading">キャンペーン期間</div>
+                      ><div class="heading mb-3">キャンペーン期間</div>
                     </v-col>
                     <v-col cols="5">
                       <v-menu max-width="300px" min-width="300px" offset-y>
@@ -175,7 +175,7 @@
                     outlined
                     label="取得方法"
                     row-height="15"
-                    rows="2"
+                    rows="5"
                     v-model="forms.getMethod"
                     class="mb-5"
                     hide-details
@@ -293,7 +293,7 @@
                   <!-- Submit Cancel-->
                   <v-layout>
                     <v-flex xs6 class="mx-2">
-                      <v-btn color="success" block>更新</v-btn>
+                      <v-btn color="success" block @click="update()">更新</v-btn>
                     </v-flex>
                     <v-flex xs6 class="mx-2">
                       <v-btn block @click="dialogEdit = false">キャンセル</v-btn>
@@ -362,6 +362,7 @@ export default {
       dialogRemove: false,
       //for Edit Form
       forms: {
+        currentID: '',
         selectTypes: { label: 'カタログ', value: 'カタログ' },
         types: [
           { label: 'カタログ', value: 'カタログ' },
@@ -387,7 +388,7 @@ export default {
         code: '',
         startDate: '',
         endDate: '',
-        summury: '',
+        summary: '',
         getMethod: '',
         selectedBenefit: [],
         benefits: [
@@ -469,7 +470,7 @@ export default {
           ],
         },
         remark: '',
-        refs: ['aaa', 'bbb'],
+        refs: ['', ''],
         isDisplay: true,
       },
     };
@@ -511,16 +512,81 @@ export default {
           return 1;
         }
       });
+      console.log(list);
+      //if NOT admin mode
+      if (!this.$store.state.adminMode) {
+        list = list.filter(val => {
+          return val['出力'] == 1 || val['出力'] == true;
+        });
+      }
       this.list = list;
       this.$emit('loaded');
     },
+    // 編集ボタンをおしたら
     edit(campID) {
-      console.log(this.list);
-      axios.get('http://lejnet/api/accdb/', { params: { db: '', table: '' } });
-      /*
-      ここから実装する
-      */
-      //alert(campID);
+      this.currentID = campID;
+      // DBのデータでフォームをうめる
+      let item = this.list.filter(val => {
+        return val['campaign_data_test.ID'] == campID;
+      });
+      item = item[0];
+      this.forms.selectTypes = { label: item['種別'], value: item['種別'] };
+      this.forms.code = item['コード'];
+      this.forms.startDate = item['開始日'];
+      this.forms.endDate = item['終了日'];
+      this.forms.summary = item['概要'];
+      this.forms.getMethod = item['取得方法'];
+
+      if (item.benefits.length > 0) {
+        for (let i of item.benefits) {
+          this.forms.selectedBenefit.push(i);
+          this.forms.selectedBenefit.push('pushed');
+        }
+      }
+
+      if (item.conditions > 0) {
+        for (let i of item.conditions) {
+          this.forms.selectedCondition.push(i);
+        }
+      }
+
+      if (item.ref > 0) {
+        for (let i of item.ref) {
+          this.forms.refs.push(i);
+        }
+      } else {
+        this.forms.refs = ['', ''];
+      }
+      this.forms.remark = item['使用条件2'];
+
+      this.forms.isDisplay = item['出力'];
+    },
+    update() {
+      let id = this.currentID;
+      let sql = `UPDATE campaign_data_test SET `;
+      let data = [
+        { col: '種別', val: `'${this.forms.selectTypes.value}'` },
+        { col: 'コード', val: `'${this.forms.code}'` },
+        { col: '開始日', val: `'${this.forms.startDate}'` },
+        { col: '終了日', val: `'${this.forms.endDate}'` },
+        { col: '概要', val: `'${this.forms.summary}'` },
+        { col: '取得方法', val: `'${this.forms.getMethod}'` },
+        { col: '特典内容', val: `'${this.forms.selectedBenefit.join()}'` },
+        { col: '使用条件1', val: `'${this.forms.selectedCondition.join()}'` },
+        { col: '使用条件2', val: `'${this.forms.remark}'` },
+        { col: '資料', val: `'${this.forms.refs.join()}'` },
+        { col: '出力', val: `'${this.forms.isDisplay}'` },
+      ];
+
+      data.map((val, index) => {
+        console.log(val.col);
+        sql += index != 0 ? ',' : '';
+        sql += ` ${val.col} = ${val.val}`;
+      });
+
+      sql += ` WHERE ID = ${id}`;
+
+      console.log(sql);
     },
     remove(campID) {
       let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;

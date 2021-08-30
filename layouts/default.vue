@@ -29,10 +29,10 @@
           </template>
           <v-list>
             <v-list-item>
-              <v-btn text to="/admin/create">新規作成</v-btn>
+              <v-btn block text to="/admin/create">新規作成</v-btn>
             </v-list-item>
             <v-list-item>
-              <v-btn text to="/">更新</v-btn>
+              <v-btn block text to="/">更新</v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
