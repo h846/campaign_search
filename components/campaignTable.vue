@@ -301,6 +301,8 @@
                   </v-layout>
                 </v-form>
               </v-card>
+              <!-- Update Complete Dialog-->
+              <v-snackbar v-model="snkbar"> 更新完了しました</v-snackbar>
             </v-dialog>
 
             <!-- 削除ボタン & ダイアログ-->
@@ -473,6 +475,7 @@ export default {
         refs: ['', ''],
         isDisplay: true,
       },
+      snkbar: false,
     };
   },
   methods: {
@@ -540,7 +543,6 @@ export default {
       if (item.benefits.length > 0) {
         for (let i of item.benefits) {
           this.forms.selectedBenefit.push(i);
-          this.forms.selectedBenefit.push('pushed');
         }
       }
 
@@ -549,14 +551,15 @@ export default {
           this.forms.selectedCondition.push(i);
         }
       }
-
-      if (item.ref > 0) {
+      this.forms.refs = [];
+      if (item.ref.length > 0) {
         for (let i of item.ref) {
           this.forms.refs.push(i);
         }
       } else {
         this.forms.refs = ['', ''];
       }
+
       this.forms.remark = item['使用条件2'];
 
       this.forms.isDisplay = item['出力'];
@@ -579,7 +582,6 @@ export default {
       ];
 
       data.map((val, index) => {
-        console.log(val.col);
         sql += index != 0 ? ',' : '';
         sql += ` ${val.col} = ${val.val}`;
       });
@@ -587,6 +589,18 @@ export default {
       sql += ` WHERE ID = ${id}`;
 
       console.log(sql);
+
+      axios
+        .post('http://lejnet/api/accdb/', {
+          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+          sql: sql,
+        })
+        .then(res => {
+          this.dialogEdit = false;
+          this.snkbar = true;
+          this.$emit('reloadlist');
+        })
+        .catch(err => console.log(err));
     },
     remove(campID) {
       let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;
