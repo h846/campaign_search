@@ -91,7 +91,7 @@ export default {
       await axios
         .get('http://lejnet/API/accdb', {
           params: {
-            db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+            db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
             table: 'campaign_data00_test',
           },
         })

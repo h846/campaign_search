@@ -293,7 +293,7 @@
                   <!-- Submit Cancel-->
                   <v-layout>
                     <v-flex xs6 class="mx-2">
-                      <v-btn color="success" block @click="update()">更新</v-btn>
+                      <v-btn color="success" block @click="update()" :loading="loading">更新</v-btn>
                     </v-flex>
                     <v-flex xs6 class="mx-2">
                       <v-btn block @click="dialogEdit = false">キャンセル</v-btn>
@@ -302,7 +302,6 @@
                 </v-form>
               </v-card>
               <!-- Update Complete Dialog-->
-              <v-snackbar v-model="snkbar"> 更新完了しました</v-snackbar>
             </v-dialog>
 
             <!-- 削除ボタン & ダイアログ-->
@@ -475,7 +474,7 @@ export default {
         refs: ['', ''],
         isDisplay: true,
       },
-      snkbar: false,
+      loading: false,
     };
   },
   methods: {
@@ -540,6 +539,9 @@ export default {
       this.forms.summary = item['概要'];
       this.forms.getMethod = item['取得方法'];
 
+      this.forms.selectedBenefit = [];
+      this.forms.selectedCondition = [];
+
       if (item.benefits.length > 0) {
         for (let i of item.benefits) {
           this.forms.selectedBenefit.push(i);
@@ -565,6 +567,7 @@ export default {
       this.forms.isDisplay = item['出力'];
     },
     update() {
+      this.loading = true;
       let id = this.currentID;
       let sql = `UPDATE campaign_data_test SET `;
       let data = [
@@ -592,12 +595,12 @@ export default {
 
       axios
         .post('http://lejnet/api/accdb/', {
-          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+          db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
           sql: sql,
         })
         .then(res => {
+          this.loading = false;
           this.dialogEdit = false;
-          this.snkbar = true;
           this.$emit('reloadlist');
         })
         .catch(err => console.log(err));
@@ -606,7 +609,7 @@ export default {
       let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;
       axios
         .post('http://lejnet/api/accdb/', {
-          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+          db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
           sql: sql,
         })
         .then(res => {
