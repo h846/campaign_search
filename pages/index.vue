@@ -36,7 +36,7 @@
         :campaign-list="dataList"
         :loading="loading"
         @loaded="loaded"
-        @reloadlist="reloadlist"
+        @reloadList="reloadList"
       />
     </v-col>
   </v-row>
@@ -98,7 +98,6 @@ export default {
         .then(res => {
           this.originalList = res.data;
           this.dataList = res.data;
-          //console.log(this.originalList);
         });
     },
     search: function() {
@@ -117,7 +116,8 @@ export default {
     loaded: function() {
       this.loading = false;
     },
-    reloadlist() {
+    reloadList() {
+      console.log('root get list');
       this.getCampaignData();
     },
   },
