@@ -15,15 +15,6 @@
       loading-text="読み込み中.....少々お待ちください。"
       no-data-text="データがありません。"
     >
-      <!-- Search Form -->
-      <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="フリーワード検索"
-          class="my-3"
-        ></v-text-field>
-      </template>
       <!-- Custom Cols -->
       <!-- 概要 -->
       <template v-slot:[`item.summary`]="{ item }">
@@ -90,7 +81,7 @@
 import editor from '@/components/admin/edit.vue';
 
 export default {
-  props: { campaignList: Array, loading: Boolean, adminMode: Boolean },
+  props: { campaignList: Array, originalList: Array, loading: Boolean, adminMode: Boolean },
   components: {
     editor,
   },
@@ -147,7 +138,6 @@ export default {
           return 1;
         }
       });
-      console.log(list);
       //if NOT admin mode
       if (!this.$store.state.adminMode) {
         list = list.filter(val => {
