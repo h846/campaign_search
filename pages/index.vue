@@ -92,7 +92,7 @@ export default {
           送料無料: '送料無料',
         },
         percentOff: ['5%off', '10%off', '15%off', '20%off', '30%off'],
-        priceOff: ['500円off', '1000円off', '2000円off', '3000円off', '5000円off'],
+        priceOff: ['500円off', '1,000円off', '2,000円off', '3,000円off', '5,000円off'],
       },
       originalList: [],
       dataList: [],
@@ -119,10 +119,10 @@ export default {
         });
     },
     search: function(searchItem) {
-      console.log(this.originalList);
+      //console.log(this.originalList);
       //値によって検索方法の振り分け
       let searching = () => {
-        //何も指定されていない場合全件
+        //何も指定されていない場合全件表示
         if (searchItem == undefined) {
           return this.originalList;
         }
@@ -132,9 +132,55 @@ export default {
             return val['種別'] == searchItem;
           });
         }
+        //パーセント割引だった場合
+        else if (/(\%off)$/i.test(searchItem)) {
+          console.log('detect');
+          let benefits, conditions;
+          //Benefits
+          let aryA = this.originalList.filter(val => {
+            benefits = val['特典内容'].split(',');
+            return benefits.some(elm => {
+              return elm.toUpperCase() == searchItem.toUpperCase();
+            });
+          });
+          /*
+            以下"使用条件"カラムに特典内容の値が入っているための対応。
+            データが整い次第削除
+          */
+          //Conditions
+          let aryB = this.originalList.filter(val => {
+            conditions = val['使用条件1'].split(',');
+            return conditions.some(elm => {
+              return elm.toUpperCase() == searchItem.toUpperCase();
+            });
+          });
+          //AとBを合わせた結果を返す
+          return [...aryA, ...aryB];
+        }
         //金額割引だった場合
-        else if(){
-
+        else if (/(円off)$/i.test(searchItem)) {
+          let item = searchItem.replace(',', '');
+          let benefits, conditions;
+          //Benefits
+          let aryA = this.originalList.filter(val => {
+            benefits = val['特典内容'].split(',');
+            return benefits.some(elm => {
+              return elm.toUpperCase() == item.toUpperCase();
+            });
+          });
+          /*
+            以下"使用条件"カラムに特典内容の値が入っているための対応。
+            データが整い次第削除
+          */
+          //Conditions
+          let aryB = this.originalList.filter(val => {
+            conditions = val['使用条件1'].split(',');
+            return conditions.some(elm => {
+              return elm.toUpperCase() == item.toUpperCase();
+            });
+          });
+          //AとBを合わせた結果を返す
+          return [...aryA, ...aryB];
         }
         // それ以外。フリーワード検索。
         else {
@@ -157,9 +203,6 @@ export default {
         }
         return isExist;
       };
-      //値は金額か
-      //　ここから
-
 
       this.dataList = searching();
     },
@@ -176,6 +219,7 @@ export default {
       this.search(this.searchItem);
     },
     searchFormVal: function() {
+      this.searchItem = '';
       this.search(this.searchFormVal);
     },
   },
