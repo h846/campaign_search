@@ -9,6 +9,8 @@
           label="フリーワード検索"
           class="my-3"
         ></v-text-field>
+        <!-- 期限切れ表示非表示 -->
+        <v-switch v-model="dispSwitch" label="期限切れ非表示" :messages="switchMsg"> </v-switch>
       </v-col>
       <v-col cols="9">
         <v-chip-group v-model="searchItem" column>
@@ -17,6 +19,7 @@
             :key="idx"
             :value="item"
             filter
+            :color="chipColors[idx]"
             outlined
           >
             {{ name }}
@@ -29,6 +32,7 @@
             :key="i"
             :value="item"
             filter
+            color="cyan darken-1"
             outlined
             >{{ item }}</v-chip
           >
@@ -40,6 +44,7 @@
             :key="i"
             :value="item"
             filter
+            color="light-green darken-1"
             outlined
             >{{ item }}</v-chip
           >
@@ -51,6 +56,7 @@
           :campaign-list="dataList"
           :original-list="originalList"
           :loading="loading"
+          :dispExpired="dispSwitch"
           @loaded="loaded"
           @reloadList="reloadList"
         />
@@ -69,6 +75,8 @@ export default {
   },
   data: function() {
     return {
+      dispSwitch: false,
+      switchMsg: 'OFF',
       searchFormVal: '',
       searchItem: '',
       searchItems: {
@@ -94,6 +102,24 @@ export default {
         percentOff: ['5%off', '10%off', '15%off', '20%off', '30%off'],
         priceOff: ['500円off', '1,000円off', '2,000円off', '3,000円off', '5,000円off'],
       },
+      chipColors: [
+        'indigo darken-4',
+        'blue lighten-2',
+        'deep-purple lighten-2',
+        'red accent-2',
+        'blue darken-3',
+        'blue accent-2',
+        'green darken-1',
+        'yellow darken-2',
+        'light-green darken-1',
+        'teal accent-3',
+        'pink accent-2',
+        'green accent-3',
+        'teal accent-4',
+        'light-green accent-3',
+        'amber darken-3',
+        'indigo darken-1',
+      ],
       originalList: [],
       dataList: [],
       loading: false,
@@ -221,6 +247,9 @@ export default {
     searchFormVal: function() {
       this.searchItem = '';
       this.search(this.searchFormVal);
+    },
+    dispSwitch: function() {
+      this.dispSwitch ? (this.switchMsg = 'ON') : (this.switchMsg = 'OFF');
     },
   },
   mounted() {

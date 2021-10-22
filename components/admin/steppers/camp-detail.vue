@@ -15,7 +15,7 @@
             outlined
             v-model="summary"
             color="success"
-            label="例: 新規顧客購買促進キャンペーン"
+            label="例: 購買促進キャンペーン"
             hide-details="auto"
             dense
             :error-messages="errMsg"
@@ -69,7 +69,16 @@
             dense
             :error-messages="errMsgURL"
             class="mb-2"
+            clearable
           ></v-text-field>
+          <div class="text-right">
+            <v-btn
+              x-small
+              class="mb-3"
+              @click="refURL = 'http://lejnet/csnet/order_tool/campaign_search/pdf/'"
+              >BASE LINK</v-btn
+            >
+          </div>
         </v-col>
       </v-row>
     </v-form>

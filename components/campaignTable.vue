@@ -9,11 +9,12 @@
       hide-default-footer
       dense
       :page.sync="page"
-      :items-per-page="50"
+      :items-per-page="20"
       @page-count="pageCount = $event"
       :loading="loading"
       loading-text="読み込み中.....少々お待ちください。"
       no-data-text="データがありません。"
+      :item-class="itemRowBackground"
     >
       <!-- Custom Cols -->
       <!-- 概要 -->
@@ -27,7 +28,7 @@
             <span class="font-weight-bold ml-1">{{ item['種別'] }}</span>
           </div>
           <div class="mb-1">
-            取得方法:
+            概要、取得方法:
             <span class="font-weight-bold ml-1">{{ item['取得方法'] }}</span>
           </div>
           <div v-if="!!item.benefits" class="mb-1">
@@ -81,7 +82,13 @@
 import editor from '@/components/admin/edit.vue';
 
 export default {
-  props: { campaignList: Array, originalList: Array, loading: Boolean, adminMode: Boolean },
+  props: {
+    campaignList: Array,
+    originalList: Array,
+    dispExpired: Boolean,
+    loading: Boolean,
+    adminMode: Boolean,
+  },
   components: {
     editor,
   },
@@ -117,7 +124,7 @@ export default {
         val.isExpired = this.validDate(val['終了日']);
         val['終了日'] = String(val['終了日']).replace(/-/g, '/');
         //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
-        //レコードの中身がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
+        //データの区切り文字がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         let tmp = String(val['資料']).split(/[,\s\r\n]/g);
         //空文字除去
         val.ref = tmp.filter(val => !!val);
@@ -144,22 +151,42 @@ export default {
           return val['出力'] == 1 || val['出力'] == true;
         });
       }
+      // disp expired campaign?
+      if (this.dispExpired) {
+        list = list.filter(val => {
+          return val.isExpired == false;
+        });
+      }
       this.list = list;
       this.$emit('loaded');
     },
     reloadList() {
       this.$emit('reloadList');
     },
+    itemRowBackground(item) {
+      if (item.isExpired) {
+        return 'expired';
+      }
+    },
   },
   watch: {
     campaignList: function() {
       this.rtnList();
     },
+    dispExpired: function() {
+      if (this.dispExpired) {
+        this.list = this.list.filter(val => {
+          return val.isExpired == false;
+        });
+      } else {
+        this.rtnList();
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .v-text-field {
   width: 400px;
   margin: 0 0 0 auto;
@@ -175,5 +202,9 @@ export default {
   font-size: 20px;
   border-left: 5px solid #002566;
   padding-left: 5px;
+}
+
+.expired {
+  background-color: #424242;
 }
 </style>

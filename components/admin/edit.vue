@@ -169,14 +169,19 @@
                 dense
                 class="mb-2"
               ></v-text-field>
+
               <v-text-field
                 v-model="forms.refs[idx + 1]"
                 label="資料URL"
                 outlined
                 hide-details
                 dense
-                class="mb-6"
+                clearable
+                class="mb-1"
               ></v-text-field>
+              <div class="text-right">
+                <v-btn x-small class="mb-3" @click="addDefoURL(idx + 1)">BASE LINK</v-btn>
+              </div>
             </div>
           </div>
           <div style="text-align:right;">
@@ -449,6 +454,10 @@ export default {
     addRef() {
       this.forms.refs.push('');
       this.forms.refs.push('');
+    },
+    addDefoURL(idx) {
+      console.log(this.forms.refs[idx]);
+      this.$set(this.forms.refs, idx, 'http://lejnet/csnet/order_tool/campaign_search/pdf/');
     },
   },
 };
