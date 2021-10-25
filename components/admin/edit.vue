@@ -363,8 +363,8 @@ export default {
       item = item[0];
       this.forms.selectTypes = { label: item['種別'], value: item['種別'] };
       this.forms.code = item['コード'];
-      this.forms.startDate = item['開始日'];
-      this.forms.endDate = item['終了日'];
+      this.forms.startDate = this.$moment(item['開始日']).format('YYYY-MM-DD');
+      this.forms.endDate = this.$moment(item['終了日']).format('YYYY-MM-DD');
       this.forms.summary = item['概要'];
       this.forms.getMethod = item['取得方法'];
 

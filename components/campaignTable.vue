@@ -100,13 +100,11 @@ export default {
       search: '',
       headers: [
         //{ text: '', value: 'isExpired', sortable: false },
-        //{ text: '詳細', value: 'data-table-expand' },
         { text: '概要', value: 'summary', sortable: false },
         { text: 'コード', value: 'コード', sortable: false },
         { text: '開始日', value: '開始日' },
         { text: '終了日', value: '終了日' },
       ],
-      expanded: [],
     };
   },
   methods: {
@@ -117,7 +115,7 @@ export default {
     },
     rtnList: function() {
       //リスト整形処理
-      let list = this.campaignList.map((val, idx) => {
+      let list = this.campaignList.map(val => {
         //format date
         val['終了日'] = this.$moment(val['終了日']).format('YYYY-MM-DD');
         // If the campaign period has already expired, flag it.
@@ -132,8 +130,6 @@ export default {
         val.benefits = String(val['特典内容']) == '' ? '' : String(val['特典内容']).split(',');
         //使用条件整形
         val.conditions = String(val['使用条件1']) == '' ? '' : String(val['使用条件1']).split(',');
-        //ID付与(for Expand)
-        val.ID = idx;
 
         return val;
       });
