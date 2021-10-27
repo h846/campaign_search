@@ -72,6 +72,16 @@
           />
         </div>
       </template>
+      <!-- 資料カラム-->
+      <template v-slot:[`item.ref`]="{ item }">
+        <div v-if="item.ref.length > 0">
+          <div v-for="(i, idx) in item.ref" :key="idx" class="mb-3">
+            <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{ item.ref[idx] }}</a>
+          </div>
+        </div>
+      </template>
+      <!-- 送料無料カラム-->
+      <template v-slot:[`item.isFreeShipping`]="{ item }">aaa {{ item.isFreeShipping }}</template>
     </v-data-table>
     <v-card-actions>
       <v-pagination v-model="page" :length="20"></v-pagination>
@@ -99,11 +109,13 @@ export default {
       pageCount: 0,
       search: '',
       headers: [
-        //{ text: '', value: 'isExpired', sortable: false },
-        { text: '概要', value: 'summary', sortable: false },
+        { text: '種類', value: '種別' },
         { text: 'コード', value: 'コード', sortable: false },
+        { text: '資料', value: 'ref', sortable: false },
         { text: '開始日', value: '開始日' },
         { text: '終了日', value: '終了日' },
+        { text: '送料無料', value: 'isFreeShipping' },
+        { text: '概要', value: 'summary', sortable: false },
       ],
     };
   },
@@ -130,6 +142,14 @@ export default {
         val.benefits = String(val['特典内容']) == '' ? '' : String(val['特典内容']).split(',');
         //使用条件整形
         val.conditions = String(val['使用条件1']) == '' ? '' : String(val['使用条件1']).split(',');
+        //送料無料？
+        if (val.benefits.isArray) {
+          val.isFreeShipping = val.benefits.some(val => val == '送料無料') ? true : false;
+        } else {
+          val.isFreeShipping = false;
+        }
+
+        // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
 
         return val;
       });
@@ -202,5 +222,11 @@ export default {
 
 .expired {
   background-color: #424242;
+}
+
+tbody {
+  tr:hover {
+    background-color: transparent !important;
+  }
 }
 </style>
