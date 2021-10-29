@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar fixed app dense :class="{ appbar: isAdmin }">
+  <v-app-bar app hide-on-scroll dense :class="{ appbar: isAdmin }">
     <v-toolbar-title>
       <nuxt-link to="/" style="text-decoration:none;color:#333;"> {{ title }}</nuxt-link>
     </v-toolbar-title>

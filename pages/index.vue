@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid ma-0 fill-height>
+  <v-container fluid Sfill-height>
     <v-row justify="center" align="center">
       <v-col cols="3">
         <v-text-field
@@ -8,6 +8,7 @@
           append-icon="mdi-magnify"
           label="フリーワード検索"
           class="my-3"
+          @keydown.enter="search(searchFormVal)"
         ></v-text-field>
         <!-- 期限切れ表示非表示 -->
         <v-switch v-model="dispSwitch" label="期限切れ非表示" :messages="switchMsg"> </v-switch>
@@ -160,7 +161,6 @@ export default {
         }
         //パーセント割引だった場合
         else if (/(\%off)$/i.test(searchItem)) {
-          console.log('detect');
           let benefits, conditions;
           //Benefits
           let aryA = this.originalList.filter(val => {
@@ -224,7 +224,8 @@ export default {
         let isExist = false;
         for (let key in types) {
           if (types[key] == item) {
-            isExist = true;
+            //送料無料というカテゴリはないので、これは除外。
+            isExist = item !== '送料無料' ? true : false;
           }
         }
         return isExist;
@@ -243,10 +244,6 @@ export default {
     // v-model の値が遅延して反映されるため
     searchItem: function() {
       this.search(this.searchItem);
-    },
-    searchFormVal: function() {
-      this.searchItem = '';
-      this.search(this.searchFormVal);
     },
     dispSwitch: function() {
       this.dispSwitch ? (this.switchMsg = 'ON') : (this.switchMsg = 'OFF');

@@ -5,13 +5,14 @@
       :items="list"
       :search="search"
       item-key="ID"
-      fixed-header
-      hide-default-footer
+      :fixed-header="true"
       dense
-      :page.sync="page"
-      :items-per-page="20"
-      @page-count="pageCount = $event"
       :loading="loading"
+      :items-per-page="20"
+      :footer-props="{
+        'items-per-page-text': '行/ページ:',
+        'items-per-page-options': [10, 20, 30, 40, 50],
+      }"
       loading-text="読み込み中.....少々お待ちください。"
       no-data-text="データがありません。"
       :item-class="itemRowBackground"
@@ -20,48 +21,18 @@
       <!-- 概要 -->
       <template v-slot:[`item.summary`]="{ item }">
         <div class="my-3">
-          <div class="mb-1">
+          <div class="mb-2">
             <span class="font-weight-bold ml-1">{{ item['概要'] }}</span>
           </div>
-          <div class="mb-1">
-            種類:
-            <span class="font-weight-bold ml-1">{{ item['種別'] }}</span>
-          </div>
-          <div class="mb-1">
-            概要、取得方法:
+          <div class="mb-2">
+            取得方法:
             <span class="font-weight-bold ml-1">{{ item['取得方法'] }}</span>
-          </div>
-          <div v-if="!!item.benefits" class="mb-1">
-            特典内容:
-            <v-chip
-              small
-              color="success"
-              v-for="(benefit, k) in item.benefits"
-              :key="k"
-              class="ml-1"
-            >
-              {{ benefit }}
-            </v-chip>
-          </div>
-          <div v-if="!!item['使用条件1']" class="mb-1">
-            使用条件:
-            <v-chip v-for="(i, k) in item.conditions" :key="k" small color="primary" class="ml-1">{{
-              i
-            }}</v-chip>
           </div>
           <div v-if="!!item['使用条件2']">
             特記事項:
             <span class="font-weight-bold">{{ item['使用条件2'] }}</span>
           </div>
 
-          <div v-if="item.ref.length > 0">
-            資料:
-            <span v-for="(i, idx) in item.ref" :key="idx" class="ml-3">
-              <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
-                item.ref[idx]
-              }}</a>
-            </span>
-          </div>
           <!-- 管理者モード時 編集 削除 ボタン -->
           <editor
             :list="list"
@@ -81,11 +52,16 @@
         </div>
       </template>
       <!-- 送料無料カラム-->
-      <template v-slot:[`item.isFreeShipping`]="{ item }">aaa {{ item.isFreeShipping }}</template>
+      <template v-slot:[`item.isFreeShipping`]="{ item }">
+        <v-chip v-if="item.isFreeShipping" small color="pink" dark> 送料無料</v-chip>
+      </template>
+      <!-- 詳細カラム-->
+      <template v-slot:[`item.details`]="{ item }">
+        <v-chip v-for="(i, k) in item.details" :key="k" small color="primary" class="ma-1">{{
+          i
+        }}</v-chip>
+      </template>
     </v-data-table>
-    <v-card-actions>
-      <v-pagination v-model="page" :length="20"></v-pagination>
-    </v-card-actions>
   </v-card>
 </template>
 <script>
@@ -105,17 +81,16 @@ export default {
   data: function() {
     return {
       list: [],
-      page: 1,
-      pageCount: 0,
       search: '',
       headers: [
-        { text: '種類', value: '種別' },
-        { text: 'コード', value: 'コード', sortable: false },
-        { text: '資料', value: 'ref', sortable: false },
-        { text: '開始日', value: '開始日' },
-        { text: '終了日', value: '終了日' },
-        { text: '送料無料', value: 'isFreeShipping' },
-        { text: '概要', value: 'summary', sortable: false },
+        { text: '種類', value: '種別', width: '10%' },
+        { text: 'コード', value: 'コード', width: '10%' },
+        { text: '資料', value: 'ref', sortable: false, width: '20%' },
+        { text: '開始日', value: '開始日', width: '5%' },
+        { text: '終了日', value: '終了日', width: '5%' },
+        { text: '概要', value: 'summary', sortable: false, width: '20%' },
+        { text: '送料無料', value: 'isFreeShipping', width: '10%' },
+        { text: '詳細', value: 'details', width: '20%' },
       ],
     };
   },
@@ -143,13 +118,16 @@ export default {
         //使用条件整形
         val.conditions = String(val['使用条件1']) == '' ? '' : String(val['使用条件1']).split(',');
         //送料無料？
-        if (val.benefits.isArray) {
+        if (Array.isArray(val.benefits)) {
           val.isFreeShipping = val.benefits.some(val => val == '送料無料') ? true : false;
+          //送料無料列に表示するので削除
+          val.benefits = val.benefits.filter(val => val != '送料無料');
         } else {
           val.isFreeShipping = false;
         }
 
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
+        val.details = [...val.benefits, ...val.conditions];
 
         return val;
       });
@@ -174,6 +152,7 @@ export default {
         });
       }
       this.list = list;
+      // console.log(list);
       this.$emit('loaded');
     },
     reloadList() {
@@ -221,7 +200,7 @@ export default {
 }
 
 .expired {
-  background-color: #424242;
+  background-color: #ccc;
 }
 
 tbody {
