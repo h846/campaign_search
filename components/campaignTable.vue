@@ -18,6 +18,9 @@
       :item-class="itemRowBackground"
     >
       <!-- Custom Cols -->
+      <template v-slot:[`item.type`]="{ item }">
+        <v-chip :color="typeColor[item.type]" dark>{{ item.type }}</v-chip>
+      </template>
       <!-- 概要 -->
       <template v-slot:[`item.summary`]="{ item }">
         <div class="my-3">
@@ -83,7 +86,7 @@ export default {
       list: [],
       search: '',
       headers: [
-        { text: '種類', value: '種別', width: '10%' },
+        { text: '種類', value: 'type', width: '10%' },
         { text: 'コード', value: 'コード', width: '10%' },
         { text: '資料', value: 'ref', sortable: false, width: '20%' },
         { text: '開始日', value: '開始日', width: '5%' },
@@ -92,6 +95,24 @@ export default {
         { text: '送料無料', value: 'isFreeShipping', width: '10%' },
         { text: '詳細', value: 'details', width: '20%' },
       ],
+      typeColor: {
+        カタログ: 'indigo darken-4',
+        荷物同梱: 'blue lighten-2',
+        premiumPlus: 'deep-purple lighten-2',
+        birthdayPlus: 'red accent-2',
+        ニュースレター: 'blue darken-3',
+        WEB: 'blue accent-2',
+        LINE: 'green darken-1',
+        XGate: 'yellow darken-2',
+        お詫び: 'light-green darken-1',
+        リサイクル: 'teal accent-3',
+        お祝い: 'pink accent-2',
+        NPAD: 'green accent-3',
+        雑誌: 'teal accent-4',
+        NPI: 'light-green accent-3',
+        FAX: 'amber darken-3',
+        送料無料: 'indigo darken-1',
+      },
     };
   },
   methods: {
@@ -108,8 +129,9 @@ export default {
         // If the campaign period has already expired, flag it.
         val.isExpired = this.validDate(val['終了日']);
         val['終了日'] = String(val['終了日']).replace(/-/g, '/');
-        //プロパティ名に日本語は使えないのでrefプロパティとして入れ替える
-        //データの区切り文字がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
+        //プロパティ名に日本語は使えないので入れ替える
+        val.type = String(val['種別']);
+        //資料データの区切り文字がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
         let tmp = String(val['資料']).split(/[,\s\r\n]/g);
         //空文字除去
         val.ref = tmp.filter(val => !!val);
@@ -152,7 +174,7 @@ export default {
         });
       }
       this.list = list;
-      // console.log(list);
+      console.log(list);
       this.$emit('loaded');
     },
     reloadList() {

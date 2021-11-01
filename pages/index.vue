@@ -177,7 +177,10 @@ export default {
           let aryB = this.originalList.filter(val => {
             conditions = val['使用条件1'].split(',');
             return conditions.some(elm => {
-              return elm.toUpperCase() == searchItem.toUpperCase();
+              return (
+                elm.toUpperCase() == searchItem.toUpperCase() ||
+                elm.toUpperCase() == searchItem.toUpperCase() + '0' //5%OFF0と登録されているものがあるため。
+              );
             });
           });
           //AとBを合わせた結果を返す
