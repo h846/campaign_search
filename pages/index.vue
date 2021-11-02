@@ -53,6 +53,7 @@
       </v-col>
       <v-col cols="12">
         <campaign-table
+          v-show="showTable"
           :admin-mode="adminMode"
           :campaign-list="dataList"
           :original-list="originalList"
@@ -76,6 +77,7 @@ export default {
   },
   data: function() {
     return {
+      showTable: false,
       dispSwitch: false,
       switchMsg: 'OFF',
       searchFormVal: '',
@@ -146,6 +148,9 @@ export default {
         });
     },
     search: function(searchItem) {
+      if (!this.showTable) {
+        this.showTable = true;
+      }
       //console.log(this.originalList);
       //値によって検索方法の振り分け
       let searching = () => {

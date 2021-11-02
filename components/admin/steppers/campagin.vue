@@ -64,6 +64,7 @@
                     readonly
                     v-on="on"
                     class="ma-0 pa-0"
+                    :disabled="dateDisabled"
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -87,6 +88,7 @@
                     hide-details="auto"
                     v-on="on"
                     class="ma-0 pa-0"
+                    :disabled="dateDisabled"
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -97,6 +99,13 @@
                   no-title
                 />
               </v-menu>
+            </v-col>
+            <v-col cols="12">
+              <v-checkbox
+                v-model="undicided"
+                label="期間未定"
+                @change="undicidedChecked"
+              ></v-checkbox>
             </v-col>
           </v-row>
         </v-col>
@@ -135,6 +144,8 @@ export default {
       campCode: '',
       fromDate: '',
       toDate: '',
+      undicided: false,
+      dateDisabled: false,
     };
   },
   created() {},
@@ -146,6 +157,18 @@ export default {
       obj.startDate = this.fromDate;
       obj.endDate = this.toDate;
       this.$store.commit('setCampInfo', obj);
+    },
+    undicidedChecked() {
+      if (this.undicided) {
+        this.dateDisabled = true;
+        this.fromDate = '';
+        this.toDate = '9999-12-31';
+        console.log('無効');
+      } else {
+        this.dateDisabled = false;
+        this.fromDate = '';
+        this.toDate = this.$moment().format('YYYY-MM-DD');
+      }
     },
   },
 };

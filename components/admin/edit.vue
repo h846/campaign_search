@@ -54,6 +54,7 @@
                   locale="jp-ja"
                   :day-format="date => new Date(date).getDate()"
                   no-title
+                  :disabled="dateDisabled"
                 />
               </v-menu>
             </v-col>
@@ -80,8 +81,16 @@
                   locale="jp-ja"
                   :day-format="date => new Date(date).getDate()"
                   no-title
+                  :disabled="dateDisabled"
                 />
               </v-menu>
+            </v-col>
+            <v-col cols="12">
+              <v-checkbox
+                v-model="undicided"
+                label="期間未定"
+                @change="undicidedChecked"
+              ></v-checkbox>
             </v-col>
           </v-row>
           <v-text-field
@@ -147,10 +156,10 @@
           </v-chip-group>
           <v-divider class="my-3"></v-divider>
           <!-- 補足情報-->
-          <div class="heading mb-2">補足情報</div>
+          <div class="heading mb-2">特記事項</div>
           <v-textarea
             outlined
-            label="補足情報"
+            label="キャンペーンや期間に関する特記事項"
             row-height="15"
             rows="2"
             v-model="forms.remark"
@@ -237,6 +246,8 @@ export default {
     return {
       dialogEdit: false,
       dialogRemove: false,
+      dateDisabled: false,
+      undicided: false,
       forms: {
         currentID: '',
         selectTypes: { label: 'カタログ', value: 'カタログ' },
@@ -458,6 +469,19 @@ export default {
     addDefoURL(idx) {
       console.log(this.forms.refs[idx]);
       this.$set(this.forms.refs, idx, 'http://lejnet/csnet/order_tool/campaign_search/pdf/');
+    },
+
+    undicidedChecked() {
+      if (this.undicided) {
+        this.dateDisabled = true;
+        this.forms.startDate = '';
+        this.forms.endDate = '9999-12-31';
+        console.log('無効');
+      } else {
+        this.dateDisabled = false;
+        this.forms.startDate = '';
+        this.forms.endDate = this.$moment().format('YYYY-MM-DD');
+      }
     },
   },
 };

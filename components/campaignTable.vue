@@ -33,7 +33,7 @@
           </div>
           <div v-if="!!item['使用条件2']">
             特記事項:
-            <span class="font-weight-bold">{{ item['使用条件2'] }}</span>
+            <span class="font-weight-bold pink--text text--accesnt-1">{{ item['使用条件2'] }}</span>
           </div>
 
           <!-- 管理者モード時 編集 削除 ボタン -->
@@ -174,7 +174,7 @@ export default {
         });
       }
       this.list = list;
-      console.log(list);
+      //console.log(list);
       this.$emit('loaded');
     },
     reloadList() {
