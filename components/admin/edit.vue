@@ -4,7 +4,7 @@
     <!-- 編集ボタン & ダイアログ-->
     <v-dialog v-model="dialogEdit" width="500">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="info" v-bind="attrs" v-on="on" @click="edit(itemid)">
+        <v-btn color="info" small class="mb-1" v-bind="attrs" v-on="on" @click="edit(itemid)">
           編集
         </v-btn>
       </template>
@@ -219,7 +219,7 @@
     <!-- 削除ボタン & ダイアログ-->
     <v-dialog v-model="dialogRemove" width="350">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="error" dark v-bind="attrs" v-on="on">
+        <v-btn color="error" small class="mb-1" dark v-bind="attrs" v-on="on">
           削除
         </v-btn>
       </template>

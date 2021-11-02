@@ -35,21 +35,17 @@
             特記事項:
             <span class="font-weight-bold pink--text text--accesnt-1">{{ item['使用条件2'] }}</span>
           </div>
-
-          <!-- 管理者モード時 編集 削除 ボタン -->
-          <editor
-            :list="list"
-            :itemid="item['campaign_data_test.ID']"
-            v-if="adminMode == true"
-            class="mt-5"
-            @reloadList="reloadList"
-          />
         </div>
       </template>
       <!-- 資料カラム-->
       <template v-slot:[`item.ref`]="{ item }">
         <div v-if="item.ref.length > 0">
-          <div v-for="(i, idx) in item.ref" :key="idx" class="mb-3">
+          <div
+            v-for="(i, idx) in item.ref"
+            :key="idx"
+            class="mb-3 text-truncate"
+            style="max-width:150px;"
+          >
             <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{ item.ref[idx] }}</a>
           </div>
         </div>
@@ -63,6 +59,17 @@
         <v-chip v-for="(i, k) in item.details" :key="k" small color="primary" class="ma-1">{{
           i
         }}</v-chip>
+      </template>
+      <!-- 管理者カラム -->
+      <template v-slot:[`item.admin`]="{ item }">
+        <!-- 管理者モード時 編集 削除 ボタン -->
+        <editor
+          :list="list"
+          :itemid="item['campaign_data_test.ID']"
+          v-if="adminMode == true"
+          class="mt-5"
+          @reloadList="reloadList"
+        />
       </template>
     </v-data-table>
   </v-card>
@@ -115,6 +122,11 @@ export default {
       },
     };
   },
+  created() {
+    if (this.$store.state.adminMode) {
+      this.headers.push({ text: '管理', value: 'admin' });
+    }
+  },
   methods: {
     validDate: function(arg) {
       let now = this.$moment().format('YYYY-MM-DD');
@@ -151,6 +163,13 @@ export default {
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
         val.details = [...val.benefits, ...val.conditions];
 
+        //管理者モードのときは管理者列を追加
+        if (this.$store.state.adminMode) {
+          val.admin = '';
+        } else {
+          delete val.admin;
+        }
+
         return val;
       });
       // Sort by date
@@ -161,12 +180,7 @@ export default {
           return 1;
         }
       });
-      //if NOT admin mode
-      if (!this.$store.state.adminMode) {
-        list = list.filter(val => {
-          return val['出力'] == 1 || val['出力'] == true;
-        });
-      }
+
       // disp expired campaign?
       if (this.dispExpired) {
         list = list.filter(val => {
