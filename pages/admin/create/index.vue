@@ -147,8 +147,8 @@ export default {
         参考資料: this.$store.state.ref,
         参考資料URL: this.$store.state.refURL,
         特典内容: this.$store.state.benefits,
-        使用条件: this.$store.state.conditions,
-        特記事項: this.$store.state.remarks,
+        使用条件: this.$store.state.conditions, // USE_CONDITION1
+        特記事項: this.$store.state.remarks, // USE_CONDITION2
       };
 
       this.dialog = true;
@@ -162,14 +162,21 @@ export default {
       delete this.campInfo['参考資料URL'];
 
       let cols =
-        '(種別, コード, 開始日, 終了日, 概要, 取得方法, 資料, 特典内容, 使用条件1, 使用条件2)';
+        '(TYPE, CODE, START_DATE, END_DATE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2)';
       let vals = Object.values(this.campInfo);
       vals = vals.reduce((a, b) => {
         return `${a},` + `'${b}'`;
       });
       vals = `(${vals})`;
 
-      let sql = `INSERT INTO \`campaign_data_test\` ${cols} VALUES ${vals};`;
+      /*
+      
+      このへんから。
+      APIを先に作成する。
+      
+      */
+
+      let sql = `INSERT INTO CAMPAIGN_DATA ${cols} VALUES ${vals};`;
       console.log(sql);
       axios
         .post('http://lejnet/api/accdb', {

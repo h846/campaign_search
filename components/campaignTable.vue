@@ -42,12 +42,7 @@
       <!-- 資料カラム-->
       <template v-slot:[`item.ref`]="{ item }">
         <div v-if="item.ref.length > 0">
-          <div
-            v-for="(i, idx) in item.ref"
-            :key="idx"
-            class="mb-3 text-truncate"
-            style="max-width:150px;"
-          >
+          <div v-for="(i, idx) in item.ref" :key="idx" class="mb-3 " style="max-width:150px;">
             <a :href="item.ref[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{ item.ref[idx] }}</a>
           </div>
         </div>
@@ -97,7 +92,7 @@ export default {
       headers: [
         { text: '種類', value: 'TYPE', width: '10%' },
         { text: 'コード', value: 'CODE', width: '10%' },
-        { text: '資料', value: 'DOCS', sortable: false, width: '20%' },
+        { text: '資料', value: 'ref', sortable: false, width: '20%' },
         { text: '開始日', value: 'START_DATE', width: '5%' },
         { text: '終了日', value: 'END_DATE', width: '5%' },
         { text: '概要', value: 'SUMMARY', sortable: false, width: '20%' },
@@ -145,15 +140,16 @@ export default {
         val.isExpired = this.validDate(val['終了日']);
         val['終了日'] = String(val['終了日']).replace(/-/g, '/');
         //資料データの区切り文字がカンマとスペースと改行コードなど混合構成されているので、データとして使えるように整形する
-        //let tmp = String(val.DOCS).split(/[,\s\r\n]/g);
-        //空文字除去
-        //val.ref = tmp.filter(val => !!val);
+        // val.ref = val.REFS.split(',') == 'null' ? '' : val.REFS.split(/[,\r\n|\n]/g);
+        val.ref = val.REFS.split(',') == 'null' ? '' : val.REFS.split(',');
         //特典内容整形
-        console.log(JSON.stringify(val.DOCS));
-        val.ref = JSON.stringify(val.DOCS).split();
-        val.benefits = String(val.BENEFITS).split(',');
+        val.benefits =
+          String(val.BENEFITS).split(',') == 'null' ? '' : String(val.BENEFITS).split(',');
         //使用条件整形
-        val.conditions = String(val.USE_CONDITION1).split(',');
+        val.conditions =
+          String(val.USE_CONDITION1).split(',') == 'null'
+            ? ''
+            : String(val.USE_CONDITION1).split(',');
         //送料無料？
         if (Array.isArray(val.benefits)) {
           val.isFreeShipping = val.benefits.some(val => val == '送料無料') ? true : false;
