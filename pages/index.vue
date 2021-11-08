@@ -135,17 +135,11 @@ export default {
   methods: {
     getCampaignData: async function() {
       this.loading = true;
-      await axios
-        .get('http://lejnet/API/accdb', {
-          params: {
-            db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
-            table: 'campaign_data00_test',
-          },
-        })
-        .then(res => {
-          this.originalList = res.data;
-          this.dataList = res.data;
-        });
+      await axios.post('http://lejnet/API/oracle/camp_data').then(res => {
+        this.originalList = res.data;
+        this.dataList = res.data;
+        console.log(this.dataList);
+      });
     },
     search: function(searchItem) {
       if (!this.showTable) {
@@ -161,7 +155,7 @@ export default {
         // キャンペーン種別だった場合
         else if (isType(searchItem)) {
           return this.originalList.filter(val => {
-            return val['種別'] == searchItem;
+            return val.TYPE == searchItem;
           });
         }
         //パーセント割引だった場合
@@ -169,7 +163,7 @@ export default {
           let benefits, conditions;
           //Benefits
           let aryA = this.originalList.filter(val => {
-            benefits = val['特典内容'].split(',');
+            benefits = val.BENEFITS.split(',');
             return benefits.some(elm => {
               return elm.toUpperCase() == searchItem.toUpperCase();
             });
@@ -180,7 +174,7 @@ export default {
           */
           //Conditions
           let aryB = this.originalList.filter(val => {
-            conditions = val['使用条件1'].split(',');
+            conditions = val.USE_CONDITION1.split(',');
             return conditions.some(elm => {
               return (
                 elm.toUpperCase() == searchItem.toUpperCase() ||
@@ -197,7 +191,7 @@ export default {
           let benefits, conditions;
           //Benefits
           let aryA = this.originalList.filter(val => {
-            benefits = val['特典内容'].split(',');
+            benefits = val.BENEFITS.split(',');
             return benefits.some(elm => {
               return elm.toUpperCase() == item.toUpperCase();
             });
@@ -208,7 +202,7 @@ export default {
           */
           //Conditions
           let aryB = this.originalList.filter(val => {
-            conditions = val['使用条件1'].split(',');
+            conditions = val.USE_CONDITION1.split(',');
             return conditions.some(elm => {
               return elm.toUpperCase() == item.toUpperCase();
             });
