@@ -62,7 +62,7 @@
         <!-- 管理者モード時 編集 削除 ボタン -->
         <editor
           :list="list"
-          :itemid="item['campaign_data_test.ID']"
+          :itemid="item.ID"
           v-if="adminMode == true"
           class="mt-5"
           @reloadList="reloadList"

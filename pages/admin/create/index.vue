@@ -169,18 +169,10 @@ export default {
       });
       vals = `(${vals})`;
 
-      /*
-      
-      このへんから。
-      APIを先に作成する。
-      
-      */
-
-      let sql = `INSERT INTO CAMPAIGN_DATA ${cols} VALUES ${vals};`;
+      let sql = `INSERT INTO CSNET.CAMPAIGN_DATA ${cols} VALUES ${vals}`;
       console.log(sql);
       axios
-        .post('http://lejnet/api/accdb', {
-          db: 'CSNet/dataCenter/DB/Product/campaign.accdb',
+        .post('http://lejnet/api/oracle/camp_data/add', {
           sql: sql,
         })
         .then(res => {

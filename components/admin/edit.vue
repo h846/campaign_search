@@ -369,27 +369,27 @@ export default {
       this.currentID = campID;
       // DBのデータでフォームをうめる
       let item = this.list.filter(val => {
-        return val['campaign_data_test.ID'] == campID;
+        return val.ID == campID;
       });
       item = item[0];
-      this.forms.selectTypes = { label: item['種別'], value: item['種別'] };
-      this.forms.code = item['コード'];
-      this.forms.startDate = this.$moment(item['開始日']).format('YYYY-MM-DD');
-      this.forms.endDate = this.$moment(item['終了日']).format('YYYY-MM-DD');
-      this.forms.summary = item['概要'];
-      this.forms.getMethod = item['取得方法'];
+      this.forms.selectTypes = { label: item.TYPE, value: item.TYPE };
+      this.forms.code = item.CODE;
+      this.forms.startDate = this.$moment(item.START_DATE).format('YYYY-MM-DD');
+      this.forms.endDate = this.$moment(item.END_DATE).format('YYYY-MM-DD');
+      this.forms.summary = item.SUMMARY;
+      this.forms.getMethod = item.GET_METHOD;
 
       this.forms.selectedBenefit = [];
       this.forms.selectedCondition = [];
 
-      if (item.benefits.length > 0) {
-        for (let i of item.benefits) {
+      if (item.BENEFITS.length > 0) {
+        for (let i of item.BENEFITS) {
           this.forms.selectedBenefit.push(i);
         }
       }
 
-      if (item.conditions > 0) {
-        for (let i of item.conditions) {
+      if (item.USE_CONDITIONS1 > 0) {
+        for (let i of item.USE_CONDITIONS1) {
           this.forms.selectedCondition.push(i);
         }
       }
