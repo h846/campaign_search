@@ -349,9 +349,9 @@ export default {
             '10月まで購入分',
             '11月まで購入分',
             '12月まで購入分',
-            'X-ing Cat.12',
-            'X-ing Cat.17',
-            'X-ing Cat.53',
+            'Xcat12',
+            'Xcat17',
+            'Xcat53',
             'X-ing 対象購入',
             'X-ing 対象商品',
           ],
@@ -371,7 +371,11 @@ export default {
       let item = this.list.filter(val => {
         return val.ID == campID;
       });
+
       item = item[0];
+
+      console.log(item.conditions, item.benefits);
+
       this.forms.selectTypes = { label: item.TYPE, value: item.TYPE };
       this.forms.code = item.CODE;
       this.forms.startDate = this.$moment(item.START_DATE).format('YYYY-MM-DD');
@@ -382,14 +386,14 @@ export default {
       this.forms.selectedBenefit = [];
       this.forms.selectedCondition = [];
 
-      if (item.BENEFITS.length > 0) {
-        for (let i of item.BENEFITS) {
+      if (item.benefits.length > 0) {
+        for (let i of item.benefits) {
           this.forms.selectedBenefit.push(i);
         }
       }
 
-      if (item.USE_CONDITIONS1 > 0) {
-        for (let i of item.USE_CONDITIONS1) {
+      if (item.conditions.length > 0) {
+        for (let i of item.conditions) {
           this.forms.selectedCondition.push(i);
         }
       }
@@ -402,26 +406,26 @@ export default {
         this.forms.refs = ['', ''];
       }
 
-      this.forms.remark = item['使用条件2'];
+      this.forms.remark = item.USE_CONDITION2 == 'null' ? '' : item.USE_CONDITION2;
 
-      this.forms.isDisplay = item['出力'];
+      this.forms.isDisplay = item.OUTPUT;
     },
     update() {
       this.formloading = true;
       let id = this.currentID;
-      let sql = `UPDATE campaign_data_test SET `;
+      let sql = `UPDATE CSNET.CAMPAIGN_DATA SET `;
       let data = [
-        { col: '種別', val: `'${this.forms.selectTypes.value}'` },
-        { col: 'コード', val: `'${this.forms.code}'` },
-        { col: '開始日', val: `'${this.forms.startDate}'` },
-        { col: '終了日', val: `'${this.forms.endDate}'` },
-        { col: '概要', val: `'${this.forms.summary}'` },
-        { col: '取得方法', val: `'${this.forms.getMethod}'` },
-        { col: '特典内容', val: `'${this.forms.selectedBenefit.join()}'` },
-        { col: '使用条件1', val: `'${this.forms.selectedCondition.join()}'` },
-        { col: '使用条件2', val: `'${this.forms.remark}'` },
-        { col: '資料', val: `'${this.forms.refs.join()}'` },
-        { col: '出力', val: `'${this.forms.isDisplay}'` },
+        { col: 'TYPE', val: `'${this.forms.selectTypes.value}'` },
+        { col: 'CODE', val: `'${this.forms.code}'` },
+        { col: 'START_DATE', val: `'${this.forms.startDate}'` },
+        { col: 'END_DATE', val: `'${this.forms.endDate}'` },
+        { col: 'SUMMARY', val: `'${this.forms.summary}'` },
+        { col: 'GET_METHOD', val: `'${this.forms.getMethod}'` },
+        { col: 'BENEFITS', val: `'${this.forms.selectedBenefit.join()}'` },
+        { col: 'USE_CONDITION1', val: `'${this.forms.selectedCondition.join()}'` },
+        { col: 'USE_CONDITION2', val: `'${this.forms.remark}'` },
+        { col: 'REFS', val: `'${this.forms.refs.join()}'` },
+        { col: 'OUTPUT', val: `'${this.forms.isDisplay}'` },
       ];
 
       data.map((val, index) => {
@@ -434,8 +438,7 @@ export default {
       console.log(sql);
 
       axios
-        .post('http://lejnet/api/accdb/', {
-          db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
+        .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
         .then(res => {
@@ -448,10 +451,9 @@ export default {
         });
     },
     remove(campID) {
-      let sql = 'DELETE FROM `campaign_data_test` WHERE `ID` = ' + campID;
+      let sql = 'DELETE FROM `CSNET.CAMPAIGN_DATA` WHERE `ID` = ' + campID;
       axios
-        .post('http://lejnet/api/accdb/', {
-          db: 'CSNet/dataCenter/DB/Product/campaign_test.accdb',
+        .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
         .then(res => {

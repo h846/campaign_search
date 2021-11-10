@@ -111,8 +111,8 @@ export default {
       console.log(this.$v.summary.$invalid);
       if (this.$v.summary.$invalid) {
         this.errMsg = '入力してください';
-      } else if (this.$v.refURL.$invalid) {
-        this.errMsgURL = '正しいURLの形式を入力してください';
+        //   } else if (this.$v.refURL.$invalid) {
+        //     this.errMsgURL = '正しいURLの形式を入力してください';
       } else {
         let obj = {};
         obj.summary = this.summary;

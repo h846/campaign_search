@@ -172,7 +172,7 @@ export default {
       let sql = `INSERT INTO CSNET.CAMPAIGN_DATA ${cols} VALUES ${vals}`;
       console.log(sql);
       axios
-        .post('http://lejnet/api/oracle/camp_data/add', {
+        .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
         .then(res => {

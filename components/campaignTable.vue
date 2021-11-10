@@ -154,20 +154,13 @@ export default {
         if (Array.isArray(val.benefits)) {
           val.isFreeShipping = val.benefits.some(val => val == '送料無料') ? true : false;
           //送料無料列に表示するので削除
-          val.benefits = val.benefits.filter(val => val != '送料無料');
+          // val.benefits = val.benefits.filter(val => val != '送料無料');
         } else {
           val.isFreeShipping = false;
         }
 
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
         val.details = [...val.benefits, ...val.conditions];
-
-        //管理者モードのときは管理者列を追加
-        if (this.$store.state.adminMode) {
-          val.admin = '';
-        } else {
-          delete val.admin;
-        }
 
         return val;
       });
