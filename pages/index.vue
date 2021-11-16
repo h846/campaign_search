@@ -138,7 +138,7 @@ export default {
       await axios.post('http://lejnet/API/oracle/camp_data').then(res => {
         this.originalList = res.data;
         this.dataList = res.data;
-        console.log(this.dataList);
+        //console.log(this.dataList);
       });
     },
     search: function(searchItem) {

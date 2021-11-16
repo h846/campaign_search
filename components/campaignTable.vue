@@ -22,20 +22,20 @@
         <v-chip :color="typeColor[item.TYPE]" dark>{{ item.TYPE }}</v-chip>
       </template>
       <!-- 概要 -->
-      <template v-slot:[`item.summary`]="{ item }">
+      <template v-slot:[`item.SUMMARY`]="{ item }">
         <div class="my-3">
           <div class="mb-2">
             <span class="font-weight-bold ml-1">{{ item.SUMMARY }}</span>
           </div>
           <div class="mb-2">
-            取得方法:
-            <span class="font-weight-bold ml-1">{{ item.GET_METHOD }}</span>
+            <span class="font-weight-bold">取得方法:</span>
+            <span class="ml-1">{{ item.GET_METHOD }}</span>
           </div>
-          <div v-if="!!item['使用条件2']">
-            特記事項:
-            <span class="font-weight-bold pink--text text--accesnt-1">{{
-              item.USE_CONDITION2
-            }}</span>
+          <div v-if="!!item.USE_CONDITION2">
+            <span class="font-weight-bold">特記事項:</span>
+            <span class="pink--text text--accesnt-1">
+              {{ item.USE_CONDITION2 }}
+            </span>
           </div>
         </div>
       </template>
@@ -90,13 +90,13 @@ export default {
       list: [],
       search: '',
       headers: [
-        { text: '種類', value: 'TYPE', width: '10%' },
-        { text: 'コード', value: 'CODE', width: '10%' },
+        { text: '種類', value: 'TYPE', width: '5%' },
+        { text: 'コード', value: 'CODE', width: '5%' },
         { text: '資料', value: 'ref', sortable: false, width: '20%' },
         { text: '開始日', value: 'START_DATE', width: '5%' },
         { text: '終了日', value: 'END_DATE', width: '5%' },
-        { text: '概要', value: 'SUMMARY', sortable: false, width: '20%' },
-        { text: '送料無料', value: 'isFreeShipping', width: '10%' },
+        { text: '概要', value: 'SUMMARY', sortable: false, width: '35%' },
+        { text: '送料無料', value: 'isFreeShipping', width: '5%' },
         { text: '詳細', value: 'details', width: '20%' },
       ],
       typeColor: {
@@ -150,6 +150,9 @@ export default {
           String(val.USE_CONDITION1).split(',') == 'null'
             ? ''
             : String(val.USE_CONDITION1).split(',');
+        //使用条件2 (特記事項)
+        if (val.USE_CONDITION2 == 'null') val.USE_CONDITION2 = '';
+
         //送料無料？
         if (Array.isArray(val.benefits)) {
           val.isFreeShipping = val.benefits.some(val => val == '送料無料') ? true : false;
@@ -187,7 +190,7 @@ export default {
         });
       }
       this.list = list;
-      //console.log(list);
+      console.log(list);
       this.$emit('loaded');
     },
     reloadList() {
