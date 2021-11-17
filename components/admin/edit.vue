@@ -193,15 +193,17 @@
               </div>
             </div>
           </div>
-          <div style="text-align:right;">
+          <div style="text-align:right;" class="mb-3">
             <v-btn @click="addRef" small color="success" dark fab
               ><v-icon large>mdi-plus</v-icon></v-btn
             >
           </div>
+          <!--
           <v-divider class="my-5"></v-divider>
-          <!-- 表示非表示-->
+           --   表示非表示 ---
           <v-checkbox v-model="forms.isDisplay" label="表示する"></v-checkbox>
           <v-divider class="my-5"></v-divider>
+          -->
           <!-- Submit Cancel-->
           <v-layout>
             <v-flex xs6 class="mx-2">
@@ -287,6 +289,7 @@ export default {
           '20%OFF',
           '25%OFF',
           '30%OFF',
+          '35%OFF',
           '40%OFF',
           '500円OFF',
           '1000円OFF',
