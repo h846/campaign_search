@@ -140,8 +140,9 @@ export default {
       this.campInfo = {
         キャンペーン種別: `'${this.$store.state.campType}'`,
         キャンペーンコード: this.$store.state.campCode,
-        開始日: this.$store.state.dateStart,
-        終了日: this.$store.state.dateEnd,
+        開始日: this.$store.state.startDate,
+        終了日: this.$store.state.endDate,
+        期間に関するコメント: this.$store.state.period_note,
         キャンペーン概要: this.$store.state.summary,
         取得方法: this.$store.state.getMethod,
         参考資料: this.$store.state.ref,
@@ -162,7 +163,7 @@ export default {
       delete this.campInfo['参考資料URL'];
 
       let cols =
-        '(TYPE, CODE, START_DATE, END_DATE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2)';
+        '(TYPE, CODE, START_DATE, END_DATE, PERIOD_NOTE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2)';
       let vals = Object.values(this.campInfo);
       vals = vals.reduce((a, b) => {
         return `${a},` + `'${b}'`;

@@ -32,7 +32,7 @@
             </span>
           </div>
 
-          <v-text-field
+          <v-textarea
             outlined
             v-model="getMethod"
             color="success"
@@ -40,7 +40,7 @@
             hide-details="auto"
             dense
             class="mb-2"
-          ></v-text-field>
+          ></v-textarea>
           <v-divider class="mt-6"></v-divider>
         </v-col>
         <!-- Referrence Section-->

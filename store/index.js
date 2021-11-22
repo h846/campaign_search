@@ -2,8 +2,9 @@ export const state = () => ({
   adminMode: false,
   campType: "",
   campCode: "",
-  dateStart: "",
-  dateEnd: "",
+  startDate: "",
+  endDate: "",
+  period_note:'',
   summary: "",
   getMethod: "",
   ref: "",
@@ -17,8 +18,9 @@ export const mutations = {
   setCampInfo(state, campInfo) {
     state.campType = campInfo.type;
     state.campCode = campInfo.code;
-    state.dateStart = campInfo.startDate;
-    state.dateEnd = campInfo.endDate;
+    state.startDate = campInfo.startDate;
+    state.endDate = campInfo.endDate;
+    state.period_note = campInfo.period_note;
   },
   setDetails(state, details) {
     state.summary = details.summary;

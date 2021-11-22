@@ -54,6 +54,11 @@
           </div>
         </div>
       </template>
+      <!-- 開始日カラム-->
+      <template v-slot:[`item.START_DATE`]="{ item }">
+        <div class="mb-3">{{ item.START_DATE }}</div>
+        <div>{{ item.PERIOD_NOTE }}</div>
+      </template>
       <!-- 送料無料カラム-->
       <template v-slot:[`item.isFreeShipping`]="{ item }">
         <v-chip v-if="item.isFreeShipping" small color="pink" dark> 送料無料</v-chip>
@@ -142,7 +147,7 @@ export default {
       //リスト整形処理
       let list = this.campaignList.map(val => {
         //format date
-        //val.END_DATE = this.$moment(val.END_DATE).format('YYYY-MM-DD');
+        val.END_DATE = this.$moment(val.END_DATE).format('YYYY-MM-DD');
         // If the campaign period has already expired, flag it.
         val.isExpired = this.validDate(val.END_DATE);
         val.END_DATE = String(val.END_DATE).replace(/-/g, '/');
@@ -218,17 +223,6 @@ export default {
 </script>
 
 <style lang="scss">
-.v-text-field {
-  width: 400px;
-  margin: 0 0 0 auto;
-}
-
-#edit-form {
-  width: 300px;
-  margin: 0 auto;
-  padding: 20px 10px;
-}
-
 .heading {
   font-size: 20px;
   border-left: 5px solid #002566;

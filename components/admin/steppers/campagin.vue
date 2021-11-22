@@ -103,9 +103,18 @@
             <v-col cols="12">
               <v-checkbox
                 v-model="undicided"
-                label="期間未定"
+                label="期間の指定なし"
                 @change="undicidedChecked"
               ></v-checkbox>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="period_note"
+                hide-details
+                outlined
+                dense
+                label="期間に関するコメント"
+              />
             </v-col>
           </v-row>
         </v-col>
@@ -144,11 +153,11 @@ export default {
       campCode: '',
       fromDate: '',
       toDate: '',
+      period_note: '',
       undicided: false,
       dateDisabled: false,
     };
   },
-  created() {},
   methods: {
     setCampInfo() {
       let obj = {};
@@ -156,17 +165,17 @@ export default {
       obj.code = this.campCode;
       obj.startDate = this.fromDate;
       obj.endDate = this.toDate;
+      obj.period_note = this.period_note;
       this.$store.commit('setCampInfo', obj);
     },
     undicidedChecked() {
       if (this.undicided) {
         this.dateDisabled = true;
-        this.fromDate = '';
-        this.toDate = '9999-12-31';
-        console.log('無効');
+        this.fromDate = null;
+        this.toDate = '9999/12/31';
       } else {
         this.dateDisabled = false;
-        this.fromDate = '';
+        this.fromDate = null;
         this.toDate = this.$moment().format('YYYY-MM-DD');
       }
     },

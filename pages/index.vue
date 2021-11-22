@@ -136,9 +136,9 @@ export default {
     getCampaignData: async function() {
       this.loading = true;
       await axios.post('http://lejnet/API/oracle/camp_data').then(res => {
-        this.originalList = res.data;
-        this.dataList = res.data;
-        //console.log(this.dataList);
+        this.originalList = this.dataList = res.data;
+        //this.dataList = res.data;
+        console.log(this.dataList);
       });
     },
     search: function(searchItem) {

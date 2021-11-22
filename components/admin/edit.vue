@@ -2,50 +2,55 @@
   <section>
     <!-- 管理者モード -->
     <!-- 編集ボタン & ダイアログ-->
-    <v-dialog v-model="dialogEdit" width="500">
+    <v-dialog v-model="dialogEdit" width="700">
       <template v-slot:activator="{ on, attrs }">
         <v-btn color="info" small class="mb-1" v-bind="attrs" v-on="on" @click="edit(itemid)">
           編集
         </v-btn>
       </template>
       <v-card class="pa-5">
-        <v-card-title>キャンペーンID: {{ itemid }}を編集中</v-card-title>
         <!-- Edit Form -->
         <v-form id="edit-form">
-          <v-select
-            v-model="forms.selectTypes"
-            :items="forms.types"
-            item-text="label"
-            item-value="value"
-            return-object
-            label="種類"
-            dense
-            hide-details
-            outlined
-            class="mb-5"
-          ></v-select>
-          <v-text-field
-            v-model="forms.code"
-            label="キャンペーンコード"
-            outlined
-            hide-details
-            dense
-            class="mb-5"
-          ></v-text-field>
-          <v-row no-gutters justify="space-between" class="mb-5">
-            <v-col cols="12" class="mb-2"><div class="heading mb-3">キャンペーン期間</div> </v-col>
-            <v-col cols="5">
-              <v-menu max-width="300px" min-width="300px" offset-y>
+          <p>編集中ID: {{ itemid }}</p>
+          <v-row>
+            <v-col cols="6">
+              <v-select
+                v-model="forms.selectTypes"
+                :items="forms.types"
+                item-text="label"
+                item-value="value"
+                return-object
+                label="種類"
+                dense
+                hide-details
+                outlined
+                class="mb-5"
+              ></v-select>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="forms.code"
+                label="キャンペーンコード"
+                outlined
+                hide-details
+                dense
+                class="mb-5"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters class="mb-5">
+            <v-col cols="12"><div class="heading">キャンペーン期間</div> </v-col>
+            <v-col cols="4">
+              <v-menu offset-y>
                 <!-- ポップアップを追加する要素にv-on="on" -->
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     slot="activator"
                     v-model="forms.startDate"
                     label="開始日"
-                    hide-details="auto"
+                    hide-details
                     readonly
                     v-on="on"
-                    class="ma-0 pa-0"
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -58,10 +63,10 @@
                 />
               </v-menu>
             </v-col>
-            <v-col cols="1" align-self="center">
+            <v-col cols="1" align-self="end" style="text-align:center;">
               <v-icon>mdi-arrow-right-bold-outline</v-icon>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="4">
               <v-menu offset-y>
                 <!-- ポップアップを追加する要素にv-on="on" -->
                 <template v-slot:activator="{ on }">
@@ -70,9 +75,8 @@
                     v-model="forms.endDate"
                     label="終了日"
                     readonly
-                    hide-details="auto"
+                    hide-details
                     v-on="on"
-                    class="ma-0 pa-0 ml-3"
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -85,27 +89,37 @@
                 />
               </v-menu>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="3">
               <v-checkbox
                 v-model="undicided"
                 label="期間未定"
+                hide-details
                 @change="undicidedChecked"
               ></v-checkbox>
             </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="forms.period_note"
+                hide-details
+                outlined
+                dense
+                label="期間に関するコメント"
+                class="mt-3"
+              />
+            </v-col>
           </v-row>
-          <v-text-field
+          <v-divider class="my-5"></v-divider>
+          <v-textarea
             v-model="forms.summary"
             label="概要"
             outlined
             hide-details
             dense
             class="mb-5"
-          ></v-text-field>
+          ></v-textarea>
           <v-textarea
             outlined
             label="取得方法"
-            row-height="15"
-            rows="5"
             v-model="forms.getMethod"
             class="mb-5"
             hide-details
@@ -277,6 +291,7 @@ export default {
         code: '',
         startDate: '',
         endDate: '',
+        period_note: '',
         summary: '',
         getMethod: '',
         selectedBenefit: [],
@@ -383,6 +398,7 @@ export default {
       this.forms.code = item.CODE;
       this.forms.startDate = this.$moment(item.START_DATE).format('YYYY-MM-DD');
       this.forms.endDate = this.$moment(item.END_DATE).format('YYYY-MM-DD');
+      this.forms.period_note = item.PERIOD_NOTE;
       this.forms.summary = item.SUMMARY;
       this.forms.getMethod = item.GET_METHOD;
 
@@ -422,6 +438,7 @@ export default {
         { col: 'CODE', val: `'${this.forms.code}'` },
         { col: 'START_DATE', val: `'${this.forms.startDate}'` },
         { col: 'END_DATE', val: `'${this.forms.endDate}'` },
+        { col: 'PERIOD_NOTE', val: `'${this.forms.period_note}'` },
         { col: 'SUMMARY', val: `'${this.forms.summary}'` },
         { col: 'GET_METHOD', val: `'${this.forms.getMethod}'` },
         { col: 'BENEFITS', val: `'${this.forms.selectedBenefit.join()}'` },
@@ -454,7 +471,7 @@ export default {
         });
     },
     remove(campID) {
-      let sql = 'DELETE FROM `CSNET.CAMPAIGN_DATA` WHERE `ID` = ' + campID;
+      let sql = 'DELETE FROM CSNET.CAMPAIGN_DATA WHERE ID = ' + campID;
       axios
         .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
@@ -491,3 +508,9 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+#edit-form {
+  width: 500px;
+  margin: 0 auto;
+}
+</style>
