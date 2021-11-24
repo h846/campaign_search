@@ -25,26 +25,24 @@
       <template v-slot:[`item.SUMMARY`]="{ item }">
         <div class="my-3">
           <div class="mb-2" v-if="!!item.SUMMARY">
-            <span class="indigo--text text--darken-4" style="display:inline-block;width:62px;"
-              >概要:
-            </span>
-            <span>{{ item.SUMMARY }}</span>
+            <div class="indigo--text text--darken-4">概要:</div>
+            <div class="mt-n1">{{ item.SUMMARY }}</div>
           </div>
 
           <div class="mb-2" v-if="!!item.GET_METHOD">
-            <span class="indigo--text text--darken-4" style="display:inline-block;width:62px;"
-              >取得方法:</span
-            >
-            <span>{{ item.GET_METHOD }}</span>
+            <div class="indigo--text text--darken-4" style="display:inline-block;width:65px;">
+              取得方法:
+            </div>
+            <div class="mt-n1">{{ item.GET_METHOD }}</div>
           </div>
 
           <div v-if="!!item.USE_CONDITION2">
-            <span class="indigo--text text--darken-4" style="display:inline-block;width:62px;"
-              >特記事項:</span
-            >
-            <span class="pink--text text--accesnt-1">
+            <div class="indigo--text text--darken-4" style="display:inline-block;width:65px;">
+              特記事項:
+            </div>
+            <div class="pink--text text--accesnt-1 mt-n1">
               {{ item.USE_CONDITION2 }}
-            </span>
+            </div>
           </div>
         </div>
       </template>
