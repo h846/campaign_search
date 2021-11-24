@@ -56,7 +56,6 @@
           v-show="showTable"
           :admin-mode="adminMode"
           :campaign-list="dataList"
-          :original-list="originalList"
           :loading="loading"
           :dispExpired="dispSwitch"
           @loaded="loaded"
@@ -136,16 +135,31 @@ export default {
     getCampaignData: async function() {
       this.loading = true;
       await axios.post('http://lejnet/API/oracle/camp_data').then(res => {
-        this.originalList = this.dataList = res.data;
-        //this.dataList = res.data;
-        console.log(this.dataList);
+        let list = res.data.map(val => {
+          // オラクルのnullは文字列となって返ってくる
+          for (let key in val) {
+            if (val[key] == 'null') {
+              if (key == 'BENEFITS' || key == 'USE_CONDITION1' || key == 'REFS') {
+                val[key] = [];
+              } else {
+                val[key] = null;
+              }
+            } else if (key == 'BENEFITS' || key == 'USE_CONDITION1' || key == 'REFS') {
+              val[key] = val[key].split(',');
+            }
+          }
+          return val;
+        });
+        //ディープコピー
+        this.originalList = list.map(val => ({ ...val }));
+        this.dataList = list.map(val => ({ ...val }));
+        //console.log(this.originalList);
       });
     },
     search: function(searchItem) {
       if (!this.showTable) {
         this.showTable = true;
       }
-      //console.log(this.originalList);
       //値によって検索方法の振り分け
       let searching = () => {
         //何も指定されていない場合全件表示
@@ -158,57 +172,26 @@ export default {
             return val.TYPE == searchItem;
           });
         }
-        //パーセント割引だった場合
-        else if (/(\%off)$/i.test(searchItem)) {
-          let benefits, conditions;
-          //Benefits
-          let aryA = this.originalList.filter(val => {
-            benefits = val.BENEFITS.split(',');
-            return benefits.some(elm => {
-              return elm.toUpperCase() == searchItem.toUpperCase();
+        //パーセント割引、金額割引だった場合
+        else if (/(\%off)$|(円off)$/i.test(searchItem)) {
+          //金額の場合カンマを除去
+          let item = searchItem.replace(',', '');
+          let ary = this.originalList.filter(val => {
+            //Benefitsを検索
+            let benefits = val.BENEFITS.some(elm => {
+              return elm.toUpperCase() == item.toUpperCase();
             });
-          });
-          /*
-            以下"使用条件"カラムに特典内容の値が入っているための対応。
-            データが整い次第削除
-          */
-          //Conditions
-          let aryB = this.originalList.filter(val => {
-            conditions = val.USE_CONDITION1.split(',');
-            return conditions.some(elm => {
+            //Conditionsを検索(Conditionsにも特典内容が入っているため)
+            let conditions = val.USE_CONDITION1.some(elm => {
               return (
-                elm.toUpperCase() == searchItem.toUpperCase() ||
-                elm.toUpperCase() == searchItem.toUpperCase() + '0' //5%OFF0と登録されているものがあるため。
+                elm.toUpperCase() == item.toUpperCase() ||
+                elm.toUpperCase() == item.toUpperCase() + '0'
               );
             });
+            return benefits || conditions;
           });
-          //AとBを合わせた結果を返す
-          return [...aryA, ...aryB];
-        }
-        //金額割引だった場合
-        else if (/(円off)$/i.test(searchItem)) {
-          let item = searchItem.replace(',', '');
-          let benefits, conditions;
-          //Benefits
-          let aryA = this.originalList.filter(val => {
-            benefits = val.BENEFITS.split(',');
-            return benefits.some(elm => {
-              return elm.toUpperCase() == item.toUpperCase();
-            });
-          });
-          /*
-            以下"使用条件"カラムに特典内容の値が入っているための対応。
-            データが整い次第削除
-          */
-          //Conditions
-          let aryB = this.originalList.filter(val => {
-            conditions = val.USE_CONDITION1.split(',');
-            return conditions.some(elm => {
-              return elm.toUpperCase() == item.toUpperCase();
-            });
-          });
-          //AとBを合わせた結果を返す
-          return [...aryA, ...aryB];
+
+          return ary;
         }
         // それ以外。フリーワード検索。
         else {

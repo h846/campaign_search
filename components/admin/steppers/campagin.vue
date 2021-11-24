@@ -64,7 +64,6 @@
                     readonly
                     v-on="on"
                     class="ma-0 pa-0"
-                    :disabled="dateDisabled"
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -172,10 +171,10 @@ export default {
       if (this.undicided) {
         this.dateDisabled = true;
         this.fromDate = null;
-        this.toDate = '9999/12/31';
+        this.toDate = '9000-12-31';
       } else {
         this.dateDisabled = false;
-        this.fromDate = null;
+        this.fromDate = this.$moment().format('YYYY-MM-DD');
         this.toDate = this.$moment().format('YYYY-MM-DD');
       }
     },

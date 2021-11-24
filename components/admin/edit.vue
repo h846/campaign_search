@@ -49,8 +49,8 @@
                     v-model="forms.startDate"
                     label="開始日"
                     hide-details
-                    readonly
                     v-on="on"
+                    clearable
                   />
                 </template>
                 <!-- ポップアップされる内容-->
@@ -59,7 +59,6 @@
                   locale="jp-ja"
                   :day-format="date => new Date(date).getDate()"
                   no-title
-                  :disabled="dateDisabled"
                 />
               </v-menu>
             </v-col>
@@ -391,12 +390,10 @@ export default {
       });
 
       item = item[0];
-
-      console.log(item.conditions, item.benefits);
-
       this.forms.selectTypes = { label: item.TYPE, value: item.TYPE };
       this.forms.code = item.CODE;
-      this.forms.startDate = this.$moment(item.START_DATE).format('YYYY-MM-DD');
+      this.forms.startDate =
+        item.START_DATE == null ? null : this.$moment(item.START_DATE).format('YYYY-MM-DD');
       this.forms.endDate = this.$moment(item.END_DATE).format('YYYY-MM-DD');
       this.forms.period_note = item.PERIOD_NOTE;
       this.forms.summary = item.SUMMARY;
@@ -405,20 +402,20 @@ export default {
       this.forms.selectedBenefit = [];
       this.forms.selectedCondition = [];
 
-      if (item.benefits.length > 0) {
-        for (let i of item.benefits) {
+      if (item.BENEFITS.length > 0) {
+        for (let i of item.BENEFITS) {
           this.forms.selectedBenefit.push(i);
         }
       }
 
-      if (item.conditions.length > 0) {
-        for (let i of item.conditions) {
+      if (item.USE_CONDITION1.length > 0) {
+        for (let i of item.USE_CONDITION1) {
           this.forms.selectedCondition.push(i);
         }
       }
       this.forms.refs = [];
-      if (item.ref.length > 0) {
-        for (let i of item.ref) {
+      if (item.REFS.length > 0) {
+        for (let i of item.REFS) {
           this.forms.refs.push(i);
         }
       } else {
@@ -496,12 +493,11 @@ export default {
     undicidedChecked() {
       if (this.undicided) {
         this.dateDisabled = true;
-        this.forms.startDate = '';
-        this.forms.endDate = '9999-12-31';
-        console.log('無効');
+        this.forms.startDate = null;
+        this.forms.endDate = '9000-12-31';
       } else {
         this.dateDisabled = false;
-        this.forms.startDate = '';
+        this.forms.startDate = null;
         this.forms.endDate = this.$moment().format('YYYY-MM-DD');
       }
     },
