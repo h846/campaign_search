@@ -24,25 +24,13 @@
       <!-- 概要 -->
       <template v-slot:[`item.SUMMARY`]="{ item }">
         <div class="my-3">
+          <!-- 概要 -->
           <div class="mb-2" v-if="!!item.SUMMARY">
-            <div class="indigo--text text--darken-4">概要:</div>
-            <div class="mt-n1">{{ item.SUMMARY }}</div>
+            <div class="mt-n1">【 {{ item.SUMMARY }} 】</div>
           </div>
-
+          <!-- 取得方法 -->
           <div class="mb-2" v-if="!!item.GET_METHOD">
-            <div class="indigo--text text--darken-4" style="display:inline-block;width:65px;">
-              取得方法:
-            </div>
             <div class="mt-n1">{{ item.GET_METHOD }}</div>
-          </div>
-
-          <div v-if="!!item.USE_CONDITION2">
-            <div class="indigo--text text--darken-4" style="display:inline-block;width:65px;">
-              特記事項:
-            </div>
-            <div class="pink--text text--accesnt-1 mt-n1">
-              {{ item.USE_CONDITION2 }}
-            </div>
           </div>
         </div>
       </template>
@@ -67,9 +55,15 @@
       </template>
       <!-- 詳細カラム-->
       <template v-slot:[`item.details`]="{ item }">
-        <v-chip v-for="(i, k) in item.details" :key="k" small color="primary" class="ma-1">{{
-          i
-        }}</v-chip>
+        <v-chip v-for="(i, k) in item.details" :key="k" small color="primary" class="ma-1">
+          {{ i }}
+        </v-chip>
+        <!-- 特記事項 -->
+        <div v-if="!!item.USE_CONDITION2">
+          <div class="pink--text text--accesnt-1 mt-n1">
+            {{ item.USE_CONDITION2 }}
+          </div>
+        </div>
       </template>
       <!-- 管理者カラム -->
       <template v-slot:[`item.admin`]="{ item }">
@@ -140,13 +134,19 @@ export default {
   },
   methods: {
     rtnList: function() {
+      // リストのディープコピー
+      let campList = JSON.parse(JSON.stringify(this.campaignList));
+      console.log(campList)
       //リスト整形処理
-      let list = this.campaignList.map(val => {
+      let list = campList.map(val => {
         // 期限切れフラグ
         let now = this.$moment().format('YYYY-MM-DD');
         val.isExpired = this.$moment(val.END_DATE).isBefore(now);
         //送料無料フラグ
         val.isFreeShipping = val.BENEFITS.some(val => val == '送料無料') ? true : false;
+        if(val.isFreeShipping ){
+          val.BENEFITS = val.BENEFITS.filter(val => val != '送料無料')
+        }
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
         val.details = [...val.BENEFITS, ...val.USE_CONDITION1];
 

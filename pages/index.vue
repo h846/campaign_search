@@ -197,7 +197,17 @@ export default {
         else {
           return this.originalList.filter(val => {
             for (let key of Object.keys(val)) {
-              if (String(val[key]).indexOf(searchItem) !== -1) return true;
+              // 資料のURLは検索しない！
+              if(key == 'REFS'){
+                val[key].forEach( (elm, idx) => {
+                  if(idx%2 != 0){
+                    if(elm.indexOf(searchItem) !== -1) return true;
+                  }
+                });
+              }else{
+                if (String(val[key]).indexOf(searchItem) !== -1) return true;
+              }
+
             }
           });
         }
