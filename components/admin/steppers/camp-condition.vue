@@ -1,18 +1,17 @@
 <template>
   <v-card max-width="350" class="px-2 py-5 mb-5 mx-auto" flat>
-    <v-form>
+    <v-form v-model="valid" ref="form">
       <v-row>
         <!--        特典内容         -->
         <v-col cols="12" class="py-0">
           <div class="header-item">
             <p class="main-header">特典内容</p>
-            <span class="sub-header">
-              特典内容を選択してください
-            </span>
+            <span class="sub-header"> 特典内容を選択してください </span>
           </div>
           <v-select
             v-model="slctdBnfts"
             outlined
+            dense
             multiple
             label="特典内容"
             :items="benefits"
@@ -20,40 +19,65 @@
             :hide-details="true"
           >
           </v-select>
-          <v-divider class="my-3"></v-divider>
+          <v-divider class="my-5"></v-divider>
         </v-col>
         <!--        使用条件         -->
         <v-col cols="12" class="py-0">
           <div class="header-item my-2">
             <p class="main-header">使用条件</p>
-            <span class="sub-header">
-              使用条件を選択してください
-            </span>
+            <span class="sub-header"> 使用条件を選択してください </span>
           </div>
+          <v-radio-group
+            v-model="SaleOK"
+            :rules="Rules"
+            dense
+            row
+            class="ma-0"
+            :disabled="chkNoSaleRakugae"
+          >
+            <v-radio label="セール可" :value="true"></v-radio>
+            <v-radio label="セール不可" :value="false" color="red"></v-radio>
+          </v-radio-group>
+          <v-radio-group
+            v-model="RakugaeOK"
+            :rules="Rules"
+            dense
+            row
+            class="ma-0"
+            :disabled="chkNoSaleRakugae"
+          >
+            <v-radio label="楽替可" :value="true"></v-radio>
+            <v-radio label="楽替不可" :value="false" color="red"></v-radio>
+          </v-radio-group>
+          <v-checkbox
+            label="Sale楽替可否不要 (外部キャンペーン)"
+            v-model="chkNoSaleRakugae"
+            @change="chkSaleRakuga()"
+            dense
+          ></v-checkbox>
           <v-select
             v-model="slctdConds"
             outlined
+            dense
             multiple
-            label="使用条件1"
+            label="使用条件"
             :items="conditions"
             :clearable="true"
             :hide-details="true"
           >
           </v-select>
-
           <v-divider class="my-3"></v-divider>
         </v-col>
         <!-- 使用条件2 -->
         <v-col>
           <div class="header-item">
             <p class="main-header">特記事項</p>
-            <span class="sub-header">
-              特記事項があれば入力してください。
-            </span>
+            <span class="sub-header"> 特記事項があれば入力してください。 </span>
           </div>
 
           <v-text-field
             outlined
+            dense
             v-model="remarks"
             color="success"
             label="特記事項"
@@ -68,10 +92,27 @@
 import { required, url, minLength } from 'vuelidate/lib/validators';
 
 export default {
-  data: function() {
+  data: function () {
     return {
+      valid: false,
       slctdBnfts: [],
       slctdConds: [],
+      chkNoSaleRakugae: false,
+      SaleOK: null,
+      RakugaeOK: null,
+      Rules: [
+        (v) => {
+          if (!this.chkNoSaleRakugae) {
+            if (v == true || v == false) {
+              return true;
+            } else {
+              return '可否を選択してください';
+            }
+          } else {
+            return true;
+          }
+        },
+      ],
       benefits: [
         '送料無料',
         '500円OFF',
@@ -95,11 +136,11 @@ export default {
         'クーポン金額以上',
         '【含まない】加工送料',
         '電話OK',
-        'Sale楽替可否不要',
-        'Sale【 NG 】',
-        'Sale【 OK 】',
-        '楽替からNG',
-        '楽替からOK',
+        // 'Sale楽替可否不要',
+        // 'Sale【 NG 】',
+        // 'Sale【 OK 】',
+        // '楽替からNG',
+        // '楽替からOK',
         '1回のみ',
         '初回のみ',
         '2回目のみ',
@@ -145,13 +186,56 @@ export default {
     };
   },
   methods: {
+    chkSaleRakuga() {
+      this.$refs.form.validate();
+      if (this.chkNoSaleRakugae) {
+        this.SaleOK = null;
+        this.RakugaeOK = null;
+        this.slctdConds = this.slctdConds.filter((val) => {
+          return (
+            val !== 'セール【OK】' &&
+            val !== 'セール【NG】' &&
+            val !== '楽替【OK】' &&
+            val !== '楽替【NG】'
+          );
+        });
+      } else {
+        this.valid = false;
+      }
+      this.$refs.form.resetValidation();
+    },
     setConditions() {
-      let obj = {};
-      obj.benefits = this.slctdBnfts;
-      obj.conditions = this.slctdConds;
-      obj.remarks = this.remarks;
-      this.$store.commit('setConditions', obj);
-      this.$emit('proceed-regist');
+      this.$refs.form.validate();
+      if (this.valid) {
+        if (!this.chkNoSaleRakugae) {
+          this.slctdConds = this.slctdConds.filter((val) => {
+            return (
+              val !== 'セール【OK】' &&
+              val !== 'セール【NG】' &&
+              val !== '楽替【OK】' &&
+              val !== '楽替【NG】'
+            );
+          });
+          if (this.SaleOK) {
+            this.slctdConds.push('セール【OK】');
+          } else {
+            this.slctdConds.push('セール【NG】');
+          }
+
+          if (this.RakugaeOK) {
+            this.slctdConds.push('楽替【OK】');
+          } else {
+            this.slctdConds.push('楽替【NG】');
+          }
+        }
+        let obj = {};
+        obj.benefits = JSON.parse(JSON.stringify(this.slctdBnfts));
+        obj.conditions = JSON.parse(JSON.stringify(this.slctdConds));
+
+        obj.remarks = this.remarks;
+        this.$store.commit('setConditions', obj);
+        this.$emit('proceed-regist');
+      }
     },
   },
 };
