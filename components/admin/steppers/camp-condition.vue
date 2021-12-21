@@ -3,7 +3,7 @@
     <v-form v-model="valid" ref="form">
       <v-row>
         <!--        特典内容         -->
-        <v-col cols="12" class="py-0">
+        <v-col cols="12" class="py-0 mb-5">
           <div class="header-item">
             <p class="main-header">特典内容</p>
             <span class="sub-header"> 特典内容を選択してください </span>
@@ -19,10 +19,9 @@
             :hide-details="true"
           >
           </v-select>
-          <v-divider class="my-5"></v-divider>
         </v-col>
         <!--        使用条件         -->
-        <v-col cols="12" class="py-0">
+        <v-col cols="12" class="py-0 mb-5">
           <div class="header-item my-2">
             <p class="main-header">使用条件</p>
             <span class="sub-header"> 使用条件を選択してください </span>
@@ -66,10 +65,9 @@
             :hide-details="true"
           >
           </v-select>
-          <v-divider class="my-3"></v-divider>
         </v-col>
         <!-- 使用条件2 -->
-        <v-col>
+        <v-col class="py-0 mb-5">
           <div class="header-item">
             <p class="main-header">特記事項</p>
             <span class="sub-header"> 特記事項があれば入力してください。 </span>
@@ -84,13 +82,21 @@
             hide-details="auto"
           ></v-text-field>
         </v-col>
+        <v-col cols="12">
+          <v-checkbox
+            class="pa-0 ma-0"
+            hide-details
+            v-model="isDisplay"
+            :true-value="1"
+            :false-value="0"
+            label="ツールに表示する"
+          ></v-checkbox>
+        </v-col>
       </v-row>
     </v-form>
   </v-card>
 </template>
 <script>
-import { required, url, minLength } from 'vuelidate/lib/validators';
-
 export default {
   data: function () {
     return {
@@ -136,11 +142,6 @@ export default {
         'クーポン金額以上',
         '【含まない】加工送料',
         '電話OK',
-        // 'Sale楽替可否不要',
-        // 'Sale【 NG 】',
-        // 'Sale【 OK 】',
-        // '楽替からNG',
-        // '楽替からOK',
         '1回のみ',
         '初回のみ',
         '2回目のみ',
@@ -183,6 +184,7 @@ export default {
         '20000円以上',
       ],
       remarks: '',
+      isDisplay: 1,
     };
   },
   methods: {
@@ -233,6 +235,7 @@ export default {
         obj.conditions = JSON.parse(JSON.stringify(this.slctdConds));
 
         obj.remarks = this.remarks;
+        obj.isDisplay = this.isDisplay;
         this.$store.commit('setConditions', obj);
         this.$emit('proceed-regist');
       }

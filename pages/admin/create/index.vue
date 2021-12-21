@@ -1,30 +1,24 @@
 <template>
-  <v-container style="width:500px;">
+  <v-container style="width: 500px">
     <h1>{{ title }}</h1>
     <v-stepper v-model="stepper">
       <v-stepper-header>
-        <v-stepper-step :complete="stepper > 1" step="1">
-          キャンペーン情報
-        </v-stepper-step>
+        <v-stepper-step :complete="stepper > 1" step="1"> キャンペーン情報 </v-stepper-step>
 
         <v-divider></v-divider>
 
-        <v-stepper-step :complete="stepper > 2" step="2">
-          詳細情報
-        </v-stepper-step>
+        <v-stepper-step :complete="stepper > 2" step="2"> 詳細情報 </v-stepper-step>
 
         <v-divider></v-divider>
 
-        <v-stepper-step step="3">
-          使用条件
-        </v-stepper-step>
+        <v-stepper-step step="3"> 使用条件 </v-stepper-step>
       </v-stepper-header>
 
       <v-stepper-items class="pb-5">
         <v-stepper-content step="1">
           <!--キャンペーン情報コンポーネント-->
           <campaign ref="campcompo" />
-          <div style="text-align:center;">
+          <div style="text-align: center">
             <v-btn
               color="primary"
               width="340px"
@@ -42,13 +36,9 @@
           <!-- 詳細情報コンポーネント -->
           <camp-detail ref="detailcompo" @go-to-next="stepper = 3" />
 
-          <div style="text-align:center;">
-            <v-btn width="140" class="mr-6" @click="stepper = 1">
-              戻る
-            </v-btn>
-            <v-btn color="primary" width="140" class="ml-6" @click="trgSetDetail()">
-              次へ
-            </v-btn>
+          <div style="text-align: center">
+            <v-btn width="140" class="mr-6" @click="stepper = 1"> 戻る </v-btn>
+            <v-btn color="primary" width="140" class="ml-6" @click="trgSetDetail()"> 次へ </v-btn>
           </div>
         </v-stepper-content>
 
@@ -56,10 +46,8 @@
           <!-- 条件コンポーネント -->
           <camp-condition ref="conditioncompo" @proceed-regist="comfirm()" />
 
-          <div style="text-align:center;">
-            <v-btn width="140" class="mr-6" @click="stepper = 2">
-              戻る
-            </v-btn>
+          <div style="text-align: center">
+            <v-btn width="140" class="mr-6" @click="stepper = 2"> 戻る </v-btn>
             <v-btn color="primary" width="140" class="ml-6" @click="trgSetCondition()">
               登録
             </v-btn>
@@ -70,12 +58,26 @@
     <!-- Regist Comfirm Dialog -->
     <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
-        <v-card-title class="text-h5">
-          以下の内容で登録します。よろしいですか？
-        </v-card-title>
+        <v-card-title class="text-h5"> 以下の内容で登録します。よろしいですか？ </v-card-title>
         <v-list two-line subheader>
           <v-list-item v-for="(item, k, i) in campInfo" :key="i">
-            <v-list-item-content>
+            <v-list-item-content v-if="k == '表示'">
+              <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
+              <v-list-item-title>{{ item == 1 ? '表示する' : '表示しない' }}</v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-content v-else-if="k == '使用条件'">
+              <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
+              <v-list-item-title v-for="(i, idx) in item" :key="idx"
+                ><p class="ma-0">{{ i }}</p></v-list-item-title
+              >
+            </v-list-item-content>
+            <v-list-item-content v-else-if="k == '特典内容'">
+              <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
+              <v-list-item-title v-for="(i, idx) in item" :key="idx"
+                ><p class="ma-0">{{ i }}</p></v-list-item-title
+              >
+            </v-list-item-content>
+            <v-list-item-content v-else>
               <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
               <v-list-item-title>{{ item }}</v-list-item-title>
             </v-list-item-content>
@@ -95,9 +97,7 @@
     <v-snackbar v-model="snackbar" :timeout="3000">
       <span>登録完了しました！</span>
       <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
-          閉じる
-        </v-btn>
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false"> 閉じる </v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -115,7 +115,7 @@ export default {
     campDetail,
     campCondition,
   },
-  data: function() {
+  data: function () {
     return {
       title: '',
       stepper: 1,
@@ -150,6 +150,7 @@ export default {
         特典内容: this.$store.state.benefits,
         使用条件: this.$store.state.conditions, // USE_CONDITION1
         特記事項: this.$store.state.remarks, // USE_CONDITION2
+        表示: this.$store.state.isDisplay,
       };
 
       this.dialog = true;
@@ -163,7 +164,7 @@ export default {
       delete this.campInfo['参考資料URL'];
 
       let cols =
-        '(TYPE, CODE, START_DATE, END_DATE, PERIOD_NOTE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2)';
+        '(TYPE, CODE, START_DATE, END_DATE, PERIOD_NOTE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2, OUTPUT)';
       let vals = Object.values(this.campInfo);
       vals = vals.reduce((a, b) => {
         return `${a},` + `'${b}'`;
@@ -176,12 +177,12 @@ export default {
         .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
-        .then(res => {
+        .then((res) => {
           this.overlay = false;
           this.snackbar = true;
           this.$router.push('/');
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     },

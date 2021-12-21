@@ -37,7 +37,7 @@
       <!-- 資料カラム-->
       <template v-slot:[`item.REFS`]="{ item }">
         <div v-if="item.REFS.length > 0">
-          <div v-for="(i, idx) in item.REFS" :key="idx" class="mb-3 " style="max-width:150px;">
+          <div v-for="(i, idx) in item.REFS" :key="idx" class="mb-3" style="max-width: 150px">
             <a :href="item.REFS[idx + 1]" target="_blank" v-if="idx % 2 == 0">{{
               item.REFS[idx]
             }}</a>
@@ -92,7 +92,7 @@ export default {
   components: {
     editor,
   },
-  data: function() {
+  data: function () {
     return {
       list: [],
       search: '',
@@ -133,25 +133,40 @@ export default {
     }
   },
   methods: {
-    rtnList: function() {
+    rtnList: function () {
       // リストのディープコピー
       let campList = JSON.parse(JSON.stringify(this.campaignList));
-      console.log(campList)
+      console.log(campList);
       //リスト整形処理
-      let list = campList.map(val => {
+      let list = campList.map((val) => {
         // 期限切れフラグ
         let now = this.$moment().format('YYYY-MM-DD');
         val.isExpired = this.$moment(val.END_DATE).isBefore(now);
         //送料無料フラグ
-        val.isFreeShipping = val.BENEFITS.some(val => val == '送料無料') ? true : false;
-        if(val.isFreeShipping ){
-          val.BENEFITS = val.BENEFITS.filter(val => val != '送料無料')
+        val.isFreeShipping = val.BENEFITS.some((val) => val == '送料無料') ? true : false;
+        if (val.isFreeShipping) {
+          val.BENEFITS = val.BENEFITS.filter((val) => val != '送料無料');
         }
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
         val.details = [...val.BENEFITS, ...val.USE_CONDITION1];
 
         return val;
       });
+
+      //ユーザーモードの時は表示フラグがあるもののみ表示する
+      if (!this.$store.state.adminMode) {
+        list = list.filter((v) => {
+          return v.OUTPUT == '1';
+        });
+      }
+
+      // 期限切れを表示するか
+      if (this.dispExpired) {
+        list = list.filter((val) => {
+          return val.isExpired == false;
+        });
+      }
+
       // Sort by date
       list = list.sort((a, b) => {
         if (a.END_DATE > b.END_DATE) {
@@ -161,12 +176,6 @@ export default {
         }
       });
 
-      // disp expired campaign?
-      if (this.dispExpired) {
-        list = list.filter(val => {
-          return val.isExpired == false;
-        });
-      }
       this.list = list;
       //console.log(list);
       this.$emit('loaded');
@@ -183,12 +192,12 @@ export default {
     },
   },
   watch: {
-    campaignList: function() {
+    campaignList: function () {
       this.rtnList();
     },
-    dispExpired: function() {
+    dispExpired: function () {
       if (this.dispExpired) {
-        this.list = this.list.filter(val => {
+        this.list = this.list.filter((val) => {
           return val.isExpired == false;
         });
       } else {

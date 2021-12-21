@@ -12,6 +12,7 @@ export const state = () => ({
   benefits: [],
   conditions: [],
   remarks: "",
+  isDisplay:null
 })
 
 export const mutations = {
@@ -32,6 +33,7 @@ export const mutations = {
     state.conditions = conditions.conditions;
     state.benefits = conditions.benefits;
     state.remarks = conditions.remarks;
+    state.isDisplay = conditions.isDisplay;
   },
   setAdminMode(state) {
     state.adminMode = true;

@@ -57,12 +57,12 @@
                 <v-date-picker
                   v-model="forms.startDate"
                   locale="jp-ja"
-                  :day-format="date => new Date(date).getDate()"
+                  :day-format="(date) => new Date(date).getDate()"
                   no-title
                 />
               </v-menu>
             </v-col>
-            <v-col cols="1" align-self="end" style="text-align:center;">
+            <v-col cols="1" align-self="end" style="text-align: center">
               <v-icon>mdi-arrow-right-bold-outline</v-icon>
             </v-col>
             <v-col cols="4">
@@ -82,7 +82,7 @@
                 <v-date-picker
                   v-model="forms.endDate"
                   locale="jp-ja"
-                  :day-format="date => new Date(date).getDate()"
+                  :day-format="(date) => new Date(date).getDate()"
                   no-title
                   :disabled="dateDisabled"
                 />
@@ -206,17 +206,19 @@
               </div>
             </div>
           </div>
-          <div style="text-align:right;" class="mb-3">
+          <div style="text-align: right" class="mb-3">
             <v-btn @click="addRef" small color="success" dark fab
               ><v-icon large>mdi-plus</v-icon></v-btn
             >
           </div>
-          <!--
           <v-divider class="my-5"></v-divider>
-           --   表示非表示 ---
-          <v-checkbox v-model="forms.isDisplay" label="表示する"></v-checkbox>
-          <v-divider class="my-5"></v-divider>
-          -->
+          <!-- 表示・非表示-->
+          <v-checkbox
+            v-model="forms.isDisplay"
+            :true-value="1"
+            :false-value="0"
+            label="表示する"
+          ></v-checkbox>
           <!-- Submit Cancel-->
           <v-layout>
             <v-flex xs6 class="mx-2">
@@ -234,9 +236,7 @@
     <!-- 削除ボタン & ダイアログ-->
     <v-dialog v-model="dialogRemove" width="350">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="error" small class="mb-1" dark v-bind="attrs" v-on="on">
-          削除
-        </v-btn>
+        <v-btn color="error" small class="mb-1" dark v-bind="attrs" v-on="on"> 削除 </v-btn>
       </template>
       <v-card>
         <v-card-title class="text-h7 white--text red lighten-2">
@@ -244,9 +244,7 @@
         </v-card-title>
 
         <v-card-actions class="py-10">
-          <v-btn x-large class="mx-auto" color="error" @click="remove(itemid)">
-            削除する
-          </v-btn>
+          <v-btn x-large class="mx-auto" color="error" @click="remove(itemid)"> 削除する </v-btn>
           <v-btn x-large class="mx-auto" @click="dialogRemove = false">キャンセル</v-btn>
         </v-card-actions>
       </v-card>
@@ -335,7 +333,6 @@ export default {
             '20000円以上',
           ],
           situation: [
-            'Sale・楽替可否不要',
             'SALE NG',
             'SALE OK',
             '楽替からNG',
@@ -375,7 +372,7 @@ export default {
         },
         remark: '',
         refs: ['', ''],
-        isDisplay: true,
+        isDisplay: null,
       },
       formloading: false,
     };
@@ -385,7 +382,7 @@ export default {
     edit(campID) {
       this.currentID = campID;
       // DBのデータでフォームをうめる
-      let item = this.list.filter(val => {
+      let item = this.list.filter((val) => {
         return val.ID == campID;
       });
 
@@ -424,7 +421,7 @@ export default {
 
       this.forms.remark = item.USE_CONDITION2 == 'null' ? '' : item.USE_CONDITION2;
 
-      this.forms.isDisplay = item.OUTPUT;
+      this.forms.isDisplay = parseInt(item.OUTPUT, 10);
     },
     update() {
       this.formloading = true;
@@ -458,11 +455,11 @@ export default {
         .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
-        .then(res => {
+        .then((res) => {
           this.formloading = false;
           this.dialogEdit = false;
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => {
           this.$emit('reloadList');
         });
@@ -473,10 +470,10 @@ export default {
         .post('http://lejnet/api/oracle/camp_data', {
           sql: sql,
         })
-        .then(res => {
+        .then((res) => {
           this.dialogRemove = false;
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => {
           this.$emit('reloadList');
         });
