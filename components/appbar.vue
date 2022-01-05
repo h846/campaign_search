@@ -1,10 +1,10 @@
 <template>
   <v-app-bar app hide-on-scroll dense :class="{ appbar: isAdmin }">
     <v-toolbar-title>
-      <nuxt-link to="/" style="text-decoration:none;color:#333;"> {{ title }}</nuxt-link>
+      <nuxt-link to="/" style="text-decoration: none; color: #333"> {{ title }}</nuxt-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn text color="primary">価格上書電卓</v-btn>
+    <!--<v-btn text color="primary">価格上書電卓</v-btn>-->
     <v-dialog width="600">
       <template v-slot:activator="{ on, attrs }">
         <v-btn text color="primary" v-bind="attrs" v-on="on">セット・プレゼント交換ルール</v-btn>

@@ -5,32 +5,19 @@
         <v-col cols="12" class="py-0 mb-5">
           <div class="header-item">
             <p class="main-header">キャンペーン種別</p>
-            <span class="sub-header">
-              キャンペーンの種別を下記から選択してください。
-            </span>
+            <span class="sub-header"> キャンペーンの種別を下記から選択してください。 </span>
           </div>
-          <v-select
-            outlined
-            color="success"
-            v-model="selectTypes"
-            :items="types"
-            item-text="label"
-            item-value="value"
-            label="種別"
-            return-object
-            single-line
-            persistent-hint
-            dense
-            :hide-details="true"
-          ></v-select>
+          <v-chip-group v-model="selectTypes" column>
+            <v-chip v-for="(i, k) in types" :key="k" :value="i.value" filter outlined>
+              {{ i.label }}
+            </v-chip>
+          </v-chip-group>
           <v-divider class="mt-5"></v-divider>
         </v-col>
         <v-col cols="12" class="py-0 mb-5">
           <div class="header-item">
             <p class="main-header">キャンペーンコード</p>
-            <span class="sub-header">
-              キャンペーンコードを入力してください。
-            </span>
+            <span class="sub-header"> キャンペーンコードを入力してください。 </span>
           </div>
           <v-text-field
             outlined
@@ -47,9 +34,7 @@
             <v-col cols="12">
               <div class="header-item mb-4">
                 <p class="main-header">キャンペーン期間</p>
-                <span class="sub-header">
-                  キャンペーンの有効期間を入力してください
-                </span>
+                <span class="sub-header"> キャンペーンの有効期間を入力してください </span>
               </div>
             </v-col>
             <v-col cols="5">
@@ -70,7 +55,7 @@
                 <v-date-picker
                   v-model="fromDate"
                   locale="jp-ja"
-                  :day-format="date => new Date(date).getDate()"
+                  :day-format="(date) => new Date(date).getDate()"
                   no-title
                 />
               </v-menu>
@@ -94,7 +79,7 @@
                 <v-date-picker
                   v-model="toDate"
                   locale="jp-ja"
-                  :day-format="date => new Date(date).getDate()"
+                  :day-format="(date) => new Date(date).getDate()"
                   no-title
                 />
               </v-menu>
@@ -122,12 +107,10 @@
   </v-card>
 </template>
 <script>
-// import { required, url, minLength } from "vuelidate/lib/validators";
-
 export default {
-  data: function() {
+  data: function () {
     return {
-      selectTypes: { label: 'カタログ', value: 'カタログ' },
+      selectTypes: '',
       types: [
         { label: 'カタログ', value: 'カタログ' },
         { label: 'ニュースレター', value: 'ニュースレター' },
@@ -160,7 +143,7 @@ export default {
   methods: {
     setCampInfo() {
       let obj = {};
-      obj.type = this.selectTypes.value;
+      obj.type = this.selectTypes;
       obj.code = this.campCode;
       obj.startDate = this.fromDate;
       obj.endDate = this.toDate;

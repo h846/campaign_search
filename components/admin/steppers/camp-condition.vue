@@ -8,17 +8,11 @@
             <p class="main-header">特典内容</p>
             <span class="sub-header"> 特典内容を選択してください </span>
           </div>
-          <v-select
-            v-model="slctdBnfts"
-            outlined
-            dense
-            multiple
-            label="特典内容"
-            :items="benefits"
-            :clearable="true"
-            :hide-details="true"
-          >
-          </v-select>
+          <v-chip-group v-model="slctdBnfts" multiple column>
+            <v-chip v-for="(item, idx) in benefits" :key="idx" :value="item" filter outlined>
+              {{ item }}
+            </v-chip>
+          </v-chip-group>
         </v-col>
         <!--        使用条件         -->
         <v-col cols="12" class="py-0 mb-5">
@@ -45,8 +39,8 @@
             class="ma-0"
             :disabled="chkNoSaleRakugae"
           >
-            <v-radio label="楽替可" :value="true"></v-radio>
-            <v-radio label="楽替不可" :value="false" color="red"></v-radio>
+            <v-radio label="楽替から可" :value="true"></v-radio>
+            <v-radio label="楽替から不可" :value="false" color="red"></v-radio>
           </v-radio-group>
           <v-checkbox
             label="Sale楽替可否不要 (外部キャンペーン)"
@@ -54,17 +48,16 @@
             @change="chkSaleRakuga()"
             dense
           ></v-checkbox>
-          <v-select
-            v-model="slctdConds"
-            outlined
-            dense
-            multiple
-            label="使用条件"
-            :items="conditions"
-            :clearable="true"
-            :hide-details="true"
-          >
-          </v-select>
+          <div v-for="(item, key) in conditions" :key="key" class="mb-5">
+            <div v-if="key == 'price'">金額</div>
+            <div v-if="key == 'Xing'">X-ing</div>
+            <div v-if="key == 'situation'">状況</div>
+            <v-chip-group v-model="slctdConds" multiple column>
+              <v-chip v-for="(i, k) in item" :key="k" :value="i" filter outlined>
+                {{ i }}
+              </v-chip>
+            </v-chip-group>
+          </div>
         </v-col>
         <!-- 使用条件2 -->
         <v-col class="py-0 mb-5">
@@ -72,7 +65,6 @@
             <p class="main-header">特記事項</p>
             <span class="sub-header"> 特記事項があれば入力してください。 </span>
           </div>
-
           <v-text-field
             outlined
             dense
@@ -100,7 +92,7 @@
 export default {
   data: function () {
     return {
-      valid: false,
+      valid: true,
       slctdBnfts: [],
       slctdConds: [],
       chkNoSaleRakugae: false,
@@ -138,51 +130,57 @@ export default {
         '40%OFF',
         '裾上げ無料',
       ],
-      conditions: [
-        'クーポン金額以上',
-        '【含まない】加工送料',
-        '電話OK',
-        '1回のみ',
-        '初回のみ',
-        '2回目のみ',
-        'レディスのみ',
-        'メンズのみ',
-        'お友達紹介',
-        'WEB専用',
-        'セールONLY',
-        '〒郵送',
-        '対象商品',
-        '楽天市場専用',
-        '１点のみ',
-        '1月まで購入分',
-        '2月まで購入分',
-        '3月まで購入分',
-        '4月まで購入分',
-        '5月まで購入分',
-        '6月まで購入分',
-        '7月まで購入分',
-        '8月まで購入分',
-        '9月まで購入分',
-        '10月まで購入分',
-        '11月まで購入分',
-        '12月まで購入分',
-        'X-ing Cat.12',
-        'X-ing Cat.17',
-        'X-ing Cat.53',
-        'X-ing 対象購入',
-        'X-ing 対象商品',
-        '2000円以上',
-        '3000円以上',
-        '4000円以上',
-        '5000円以上',
-        '7000円以上',
-        '7500円以上',
-        '8000円以上',
-        '10000円以上',
-        '12000円以上',
-        '15000円以上',
-        '20000円以上',
-      ],
+      conditions: {
+        situation: [
+          '電話OK',
+          '1回のみ',
+          '初回のみ',
+          '2回目のみ',
+          'レディスのみ',
+          'メンズのみ',
+          'お友達紹介',
+          'WEB専用',
+          'セールONLY',
+          '〒郵送',
+          '対象商品',
+          '楽天市場専用',
+          '１点のみ',
+        ],
+        Xing: [
+          '1月まで購入分',
+          '2月まで購入分',
+          '3月まで購入分',
+          '4月まで購入分',
+          '5月まで購入分',
+          '6月まで購入分',
+          '7月まで購入分',
+          '8月まで購入分',
+          '9月まで購入分',
+          '10月まで購入分',
+          '11月まで購入分',
+          '12月まで購入分',
+          'X-ing Cat.12',
+          'X-ing Cat.17',
+          'X-ing Cat.53',
+          'X-ing 対象購入',
+          'X-ing 対象商品',
+        ],
+        price: [
+          'クーポン金額以上',
+          '【含まない】加工送料',
+          '2000円以上',
+          '3000円以上',
+          '4000円以上',
+          '5000円以上',
+          '7000円以上',
+          '7500円以上',
+          '8000円以上',
+          '10000円以上',
+          '12000円以上',
+          '15000円以上',
+          '20000円以上',
+        ],
+      },
       remarks: '',
       isDisplay: 1,
     };
@@ -195,10 +193,7 @@ export default {
         this.RakugaeOK = null;
         this.slctdConds = this.slctdConds.filter((val) => {
           return (
-            val !== 'セール【OK】' &&
-            val !== 'セール【NG】' &&
-            val !== '楽替【OK】' &&
-            val !== '楽替【NG】'
+            val !== 'SALE OK' && val !== 'SALE NG' && val !== '楽替からOK' && val !== '楽替からNG'
           );
         });
       } else {
@@ -212,22 +207,19 @@ export default {
         if (!this.chkNoSaleRakugae) {
           this.slctdConds = this.slctdConds.filter((val) => {
             return (
-              val !== 'セール【OK】' &&
-              val !== 'セール【NG】' &&
-              val !== '楽替【OK】' &&
-              val !== '楽替【NG】'
+              val !== 'SALE OK' && val !== 'SALE NG' && val !== '楽替からOK' && val !== '楽替からNG'
             );
           });
           if (this.SaleOK) {
-            this.slctdConds.push('セール【OK】');
+            this.slctdConds.push('SALE OK');
           } else {
-            this.slctdConds.push('セール【NG】');
+            this.slctdConds.push('SALE NG');
           }
 
           if (this.RakugaeOK) {
-            this.slctdConds.push('楽替【OK】');
+            this.slctdConds.push('楽替からOK');
           } else {
-            this.slctdConds.push('楽替【NG】');
+            this.slctdConds.push('楽替からNG');
           }
         }
         let obj = {};

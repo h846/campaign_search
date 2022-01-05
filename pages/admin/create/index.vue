@@ -23,8 +23,8 @@
               color="primary"
               width="340px"
               @click="
-                stepper = 2;
                 trgSetCampInfo();
+                stepper = 2;
               "
             >
               次へ
