@@ -147,6 +147,9 @@ export default {
         if (val.isFreeShipping) {
           val.BENEFITS = val.BENEFITS.filter((val) => val != '送料無料');
         }
+        //日付のフォーマット
+        val.START_DATE = this.$moment(val.START_DATE).format('YYYY/MM/DD');
+        val.END_DATE = this.$moment(val.END_DATE).format('YYYY/MM/DD');
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
         val.details = [...val.BENEFITS, ...val.USE_CONDITION1];
 
