@@ -179,7 +179,7 @@ export default {
         // キャンペーン種別だった場合
         else if (isType(si)) {
           return this.originalList.filter((val) => {
-            return val.TYPE == si;
+            return val.TYPE.toLowerCase() == si;
           });
         }
         //パーセント割引、金額割引だった場合
@@ -211,11 +211,11 @@ export default {
               if (key == 'REFS') {
                 val[key].forEach((elm, idx) => {
                   if (idx % 2 != 0) {
-                    if (elm.indexOf(si) !== -1) return true;
+                    if (elm.toLowerCase().indexOf(si) !== -1) return true;
                   }
                 });
               } else {
-                if (String(val[key]).indexOf(si) !== -1) return true;
+                if (String(val[key]).toLowerCase().indexOf(si) !== -1) return true;
               }
             }
           });
