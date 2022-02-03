@@ -137,17 +137,17 @@ export default {
       // リストのディープコピー
       let campList = JSON.parse(JSON.stringify(this.campaignList));
       console.log(campList);
-      //リスト整形処理
+      // リスト整形処理
       let list = campList.map((val) => {
         // 期限切れフラグ
         let now = this.$moment().format('YYYY-MM-DD');
         val.isExpired = this.$moment(val.END_DATE).isBefore(now);
-        //送料無料フラグ
+        // 送料無料フラグ
         val.isFreeShipping = val.BENEFITS.some((val) => val == '送料無料') ? true : false;
         if (val.isFreeShipping) {
           val.BENEFITS = val.BENEFITS.filter((val) => val != '送料無料');
         }
-        //日付のフォーマット
+        // 日付のフォーマット
         val.START_DATE = this.$moment(val.START_DATE).format('YYYY/MM/DD');
         val.END_DATE = this.$moment(val.END_DATE).format('YYYY/MM/DD');
         // 詳細カラム(特典内容と使用条件の内容を合体したもの。結局これにまとめて表示するそう。。。)
@@ -163,21 +163,38 @@ export default {
         });
       }
 
+      // リストの並びを調整
+      //　期限切れとそうでないものでリストを分ける
+      let invalidList = list.filter((val) => {
+        return val.isExpired == true;
+      });
+      let validList = list.filter((val) => {
+        return val.isExpired == false;
+      });
+      //それぞれのリストを日付降順でソート
+      invalidList = invalidList.sort((a, b) => {
+        if (a.START_DATE > b.START_DATE) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      validList = validList.sort((a, b) => {
+        if (a.START_DATE > b.START_DATE) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      //リストを結合
+      list = [...validList, ...invalidList];
+
       // 期限切れを表示するか
       if (this.dispExpired) {
         list = list.filter((val) => {
           return val.isExpired == false;
         });
       }
-
-      // Sort by date
-      list = list.sort((a, b) => {
-        if (a.END_DATE > b.END_DATE) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
 
       this.list = list;
       //console.log(list);
