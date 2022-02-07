@@ -227,4 +227,8 @@ tbody {
     background-color: transparent !important;
   }
 }
+
+td {
+  border-bottom: 2.5px solid #000 !important;
+}
 </style>

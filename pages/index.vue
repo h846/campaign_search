@@ -21,7 +21,7 @@
             :value="item"
             filter
             :color="chipColors[idx]"
-            outlined
+            dark
           >
             {{ name }}
           </v-chip>
@@ -34,7 +34,7 @@
             :value="item"
             filter
             color="cyan darken-1"
-            outlined
+            dark
             >{{ item }}</v-chip
           >
         </v-chip-group>
@@ -46,7 +46,7 @@
             :value="item"
             filter
             color="light-green darken-1"
-            outlined
+            dark
             >{{ item }}</v-chip
           >
         </v-chip-group>
@@ -74,7 +74,7 @@ export default {
   components: {
     CampaignTable,
   },
-  data: function() {
+  data: function () {
     return {
       showTable: false,
       dispSwitch: false,
@@ -118,7 +118,7 @@ export default {
         'pink accent-2',
         'green accent-3',
         'teal accent-4',
-        'light-green accent-3',
+        'light-green darken-1',
         'amber darken-3',
         'indigo darken-1',
       ],
@@ -132,10 +132,10 @@ export default {
     this.getCampaignData();
   },
   methods: {
-    getCampaignData: async function() {
+    getCampaignData: async function () {
       this.loading = true;
-      await axios.post('http://lejnet/API/oracle/camp_data').then(res => {
-        let list = res.data.map(val => {
+      await axios.post('http://lejnet/API/oracle/camp_data').then((res) => {
+        let list = res.data.map((val) => {
           // オラクルのnullは文字列となって返ってくる
           for (let key in val) {
             if (val[key] == 'null') {
@@ -151,12 +151,12 @@ export default {
           return val;
         });
         //ディープコピー
-        this.originalList = list.map(val => ({ ...val }));
-        this.dataList = list.map(val => ({ ...val }));
+        this.originalList = list.map((val) => ({ ...val }));
+        this.dataList = list.map((val) => ({ ...val }));
         //console.log(this.originalList);
       });
     },
-    search: function(searchItem) {
+    search: function (searchItem) {
       if (!this.showTable) {
         this.showTable = true;
       }
@@ -168,7 +168,7 @@ export default {
         }
         // キャンペーン種別だった場合
         else if (isType(searchItem)) {
-          return this.originalList.filter(val => {
+          return this.originalList.filter((val) => {
             return val.TYPE == searchItem;
           });
         }
@@ -176,13 +176,13 @@ export default {
         else if (/(\%off)$|(円off)$/i.test(searchItem)) {
           //金額の場合カンマを除去
           let item = searchItem.replace(',', '');
-          let ary = this.originalList.filter(val => {
+          let ary = this.originalList.filter((val) => {
             //Benefitsを検索
-            let benefits = val.BENEFITS.some(elm => {
+            let benefits = val.BENEFITS.some((elm) => {
               return elm.toUpperCase() == item.toUpperCase();
             });
             //Conditionsを検索(Conditionsにも特典内容が入っているため)
-            let conditions = val.USE_CONDITION1.some(elm => {
+            let conditions = val.USE_CONDITION1.some((elm) => {
               return (
                 elm.toUpperCase() == item.toUpperCase() ||
                 elm.toUpperCase() == item.toUpperCase() + '0'
@@ -195,26 +195,25 @@ export default {
         }
         // それ以外。フリーワード検索。
         else {
-          return this.originalList.filter(val => {
+          return this.originalList.filter((val) => {
             for (let key of Object.keys(val)) {
               // 資料のURLは検索しない！
-              if(key == 'REFS'){
-                val[key].forEach( (elm, idx) => {
-                  if(idx%2 != 0){
-                    if(elm.indexOf(searchItem) !== -1) return true;
+              if (key == 'REFS') {
+                val[key].forEach((elm, idx) => {
+                  if (idx % 2 != 0) {
+                    if (elm.indexOf(searchItem) !== -1) return true;
                   }
                 });
-              }else{
+              } else {
                 if (String(val[key]).indexOf(searchItem) !== -1) return true;
               }
-
             }
           });
         }
       };
       //以下値判別用関数
       //値は種別か
-      let isType = item => {
+      let isType = (item) => {
         let types = this.searchItems.campaignType;
         let isExist = false;
         for (let key in types) {
@@ -228,7 +227,7 @@ export default {
 
       this.dataList = searching();
     },
-    loaded: function() {
+    loaded: function () {
       this.loading = false;
     },
     reloadList() {
@@ -237,10 +236,10 @@ export default {
   },
   watch: {
     // v-model の値が遅延して反映されるため
-    searchItem: function() {
+    searchItem: function () {
       this.search(this.searchItem);
     },
-    dispSwitch: function() {
+    dispSwitch: function () {
       this.dispSwitch ? (this.switchMsg = 'ON') : (this.switchMsg = 'OFF');
     },
   },
