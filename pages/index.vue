@@ -68,6 +68,7 @@
 
 <script>
 import axios from 'axios';
+import moji from 'moji';
 import CampaignTable from '~/components/campaignTable.vue';
 
 export default {
@@ -141,6 +142,9 @@ export default {
             if (val[key] == 'null') {
               if (key == 'BENEFITS' || key == 'USE_CONDITION1' || key == 'REFS') {
                 val[key] = [];
+              } else if (key == 'START_DATE' || key == 'END_DATE') {
+                //日付カラムの場合
+                val[key] = '1900/01/01';
               } else {
                 val[key] = null;
               }
@@ -157,25 +161,31 @@ export default {
       });
     },
     search: function (searchItem) {
+      //全角半角大文字小文字すべて検索に対応できるようにする
+      //全角を半角へ大文字を小文字へ
+      let si = searchItem;
+      if (si !== undefined) {
+        si = moji(searchItem).convert('ZE', 'HE').toString().toLowerCase();
+      }
       if (!this.showTable) {
         this.showTable = true;
       }
       //値によって検索方法の振り分け
       let searching = () => {
         //何も指定されていない場合全件表示
-        if (searchItem == undefined) {
+        if (si == undefined) {
           return this.originalList;
         }
         // キャンペーン種別だった場合
-        else if (isType(searchItem)) {
+        else if (isType(si)) {
           return this.originalList.filter((val) => {
-            return val.TYPE == searchItem;
+            return val.TYPE.toLowerCase() == si;
           });
         }
         //パーセント割引、金額割引だった場合
-        else if (/(\%off)$|(円off)$/i.test(searchItem)) {
+        else if (/(\%off)$|(円off)$/i.test(si)) {
           //金額の場合カンマを除去
-          let item = searchItem.replace(',', '');
+          let item = si.replace(',', '');
           let ary = this.originalList.filter((val) => {
             //Benefitsを検索
             let benefits = val.BENEFITS.some((elm) => {
@@ -201,11 +211,11 @@ export default {
               if (key == 'REFS') {
                 val[key].forEach((elm, idx) => {
                   if (idx % 2 != 0) {
-                    if (elm.indexOf(searchItem) !== -1) return true;
+                    if (elm.toLowerCase().indexOf(si) !== -1) return true;
                   }
                 });
               } else {
-                if (String(val[key]).indexOf(searchItem) !== -1) return true;
+                if (String(val[key]).toLowerCase().indexOf(si) !== -1) return true;
               }
             }
           });
