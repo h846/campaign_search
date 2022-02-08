@@ -6,9 +6,7 @@
         <v-col cols="12">
           <div class="header-item">
             <p class="main-header">キャンペーン概要</p>
-            <span class="sub-header">
-              キャンペーンの名前や概要を入力してください。
-            </span>
+            <span class="sub-header"> キャンペーンの名前や概要を入力してください。 </span>
           </div>
 
           <v-text-field
@@ -27,9 +25,7 @@
         <v-col cols="12">
           <div class="header-item">
             <p class="main-header">取得方法</p>
-            <span class="sub-header">
-              キャンペーンの取得方法を入力してください。
-            </span>
+            <span class="sub-header"> キャンペーンの取得方法を入力してください。 </span>
           </div>
 
           <v-textarea
@@ -47,9 +43,7 @@
         <v-col cols="12" class="py-0">
           <div class="header-item">
             <p class="main-header">資料</p>
-            <span class="sub-header">
-              資料がある場合は名前とURLを入力してください
-            </span>
+            <span class="sub-header"> 資料がある場合は名前とURLを入力してください </span>
           </div>
           <v-text-field
             outlined
@@ -88,7 +82,7 @@
 import { required, url } from 'vuelidate/lib/validators';
 
 export default {
-  data: function() {
+  data: function () {
     return {
       summary: '',
       errMsg: '',
@@ -117,6 +111,7 @@ export default {
         let obj = {};
         obj.summary = this.summary;
         obj.getMethod = this.getMethod;
+        console.log(this.getMethod);
         obj.ref = this.refName;
         obj.refURL = this.refURL;
         this.$store.commit('setDetails', obj);

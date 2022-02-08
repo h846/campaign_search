@@ -276,7 +276,6 @@ export default {
           { label: 'Facebook', value: 'FACEBOOK' },
           { label: 'FAX', value: 'FAX' },
           { label: 'Instagram', value: 'INSTAGRAM' },
-          { label: '新聞', value: 'NP' },
           { label: '新聞広告', value: 'NPAD' },
           { label: '折込チラシ', value: 'NPI' },
           { label: 'テレビ通販', value: 'TV通販' },

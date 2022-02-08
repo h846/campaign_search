@@ -29,7 +29,7 @@
             <div class="mt-n1">【 {{ item.SUMMARY }} 】</div>
           </div>
           <!-- 取得方法 -->
-          <div class="mb-2" v-if="!!item.GET_METHOD">
+          <div class="mb-2" v-if="!!item.GET_METHOD" style="white-space: pre-wrap">
             <div class="mt-n1">{{ item.GET_METHOD }}</div>
           </div>
         </div>
@@ -55,9 +55,11 @@
       </template>
       <!-- 詳細カラム-->
       <template v-slot:[`item.details`]="{ item }">
-        <v-chip v-for="(i, k) in item.details" :key="k" small color="primary" class="ma-1">
-          {{ i }}
-        </v-chip>
+        <span v-for="(i, k) in item.details" :key="k">
+          <v-chip v-if="i != '送料無料'" small color="primary" class="ma-1">
+            {{ i }}
+          </v-chip>
+        </span>
         <!-- 特記事項 -->
         <div v-if="!!item.USE_CONDITION2">
           <div class="pink--text text--accesnt-1 mt-n1">
@@ -145,7 +147,7 @@ export default {
         // 送料無料フラグ
         val.isFreeShipping = val.BENEFITS.some((val) => val == '送料無料') ? true : false;
         if (val.isFreeShipping) {
-          val.BENEFITS = val.BENEFITS.filter((val) => val != '送料無料');
+          //val.BENEFITS = val.BENEFITS.filter((val) => val != '送料無料');
         }
         // 日付のフォーマット
         val.START_DATE = this.$moment(val.START_DATE).format('YYYY/MM/DD');
