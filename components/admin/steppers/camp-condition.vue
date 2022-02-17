@@ -26,26 +26,19 @@
             dense
             row
             class="ma-0"
-            :disabled="chkNoSaleRakugae"
+            :disabled="saleRakugae"
           >
             <v-radio label="セール可" :value="true"></v-radio>
             <v-radio label="セール不可" :value="false" color="red"></v-radio>
           </v-radio-group>
-          <v-radio-group
-            v-model="RakugaeOK"
-            :rules="Rules"
-            dense
-            row
-            class="ma-0"
-            :disabled="chkNoSaleRakugae"
-          >
+          <v-radio-group v-model="RakugaeOK" :rules="Rules" dense row class="ma-0">
             <v-radio label="楽替から可" :value="true"></v-radio>
             <v-radio label="楽替から不可" :value="false" color="red"></v-radio>
           </v-radio-group>
           <v-checkbox
             label="Sale楽替可否不要 (外部キャンペーン)"
-            v-model="chkNoSaleRakugae"
-            @change="chkSaleRakuga()"
+            v-model="saleRakugae"
+            @change="chkSaleRakugae()"
             dense
           ></v-checkbox>
           <div v-for="(item, key) in conditions" :key="key" class="mb-5">
@@ -95,12 +88,12 @@ export default {
       valid: true,
       slctdBnfts: [],
       slctdConds: [],
-      chkNoSaleRakugae: false,
+      saleRakugae: false,
       SaleOK: null,
       RakugaeOK: null,
       Rules: [
         (v) => {
-          if (!this.chkNoSaleRakugae) {
+          if (!this.saleRakugae) {
             if (v == true || v == false) {
               return true;
             } else {
@@ -144,7 +137,7 @@ export default {
           '〒郵送',
           '対象商品',
           '楽天市場専用',
-          '１点のみ',
+          '1点のみ',
         ],
         Xing: [
           '1月まで購入分',
@@ -186,42 +179,36 @@ export default {
     };
   },
   methods: {
-    chkSaleRakuga() {
+    chkSaleRakugae() {
+      this.SaleOK = null;
+      this.RakugaeOK = null;
+      this.slctdConds = this.slctdConds.filter((val) => {
+        return (
+          val !== 'SALE OK' && val !== 'SALE NG' && val !== '楽替からOK' && val !== '楽替からNG'
+        );
+      });
+    },
+    setConditions() {
       this.$refs.form.validate();
-      if (this.chkNoSaleRakugae) {
-        this.SaleOK = null;
-        this.RakugaeOK = null;
+      if (this.valid) {
         this.slctdConds = this.slctdConds.filter((val) => {
           return (
             val !== 'SALE OK' && val !== 'SALE NG' && val !== '楽替からOK' && val !== '楽替からNG'
           );
         });
-      } else {
-        this.valid = false;
-      }
-      this.$refs.form.resetValidation();
-    },
-    setConditions() {
-      this.$refs.form.validate();
-      if (this.valid) {
-        if (!this.chkNoSaleRakugae) {
-          this.slctdConds = this.slctdConds.filter((val) => {
-            return (
-              val !== 'SALE OK' && val !== 'SALE NG' && val !== '楽替からOK' && val !== '楽替からNG'
-            );
-          });
-          if (this.SaleOK) {
-            this.slctdConds.push('SALE OK');
-          } else {
-            this.slctdConds.push('SALE NG');
-          }
 
-          if (this.RakugaeOK) {
-            this.slctdConds.push('楽替からOK');
-          } else {
-            this.slctdConds.push('楽替からNG');
-          }
+        if (this.SaleOK === true) {
+          this.slctdConds.push('SALE OK');
+        } else if (this.SaleOK === false) {
+          this.slctdConds.push('SALE NG');
         }
+
+        if (this.RakugaeOK === true) {
+          this.slctdConds.push('楽替からOK');
+        } else if (this.RakugaeOK === false) {
+          this.slctdConds.push('楽替からNG');
+        }
+
         let obj = {};
         obj.benefits = JSON.parse(JSON.stringify(this.slctdBnfts));
         obj.conditions = JSON.parse(JSON.stringify(this.slctdConds));
