@@ -17,22 +17,14 @@
       no-data-text="データがありません。"
       :item-class="itemRowBackground"
     >
-      <!-- Custom Cols -->
+      <!-- 列のカスタム-->
+      <!-- 種類カラム -->
       <template v-slot:[`item.TYPE`]="{ item }">
         <v-chip :color="typeColor[item.TYPE]" dark>{{ item.TYPE }}</v-chip>
       </template>
-      <!-- 概要 -->
-      <template v-slot:[`item.SUMMARY`]="{ item }">
-        <div class="my-3">
-          <!-- 概要 -->
-          <div class="mb-2" v-if="!!item.SUMMARY">
-            <div class="mt-n1">【 {{ item.SUMMARY }} 】</div>
-          </div>
-          <!-- 取得方法 -->
-          <div class="mb-2" v-if="!!item.GET_METHOD" style="white-space: pre-wrap">
-            <div class="mt-n1">{{ item.GET_METHOD }}</div>
-          </div>
-        </div>
+      <!-- コードカラム -->
+      <template v-slot:[`item.CODE`]="{ item }">
+        <div style="font-weight: bold; font-size: 14px">{{ item.TYPE }}</div>
       </template>
       <!-- 資料カラム-->
       <template v-slot:[`item.REFS`]="{ item }">
@@ -49,6 +41,20 @@
         <div v-if="!!item.START_DATE">{{ item.START_DATE }}</div>
         <div class="mt-3" v-if="!!item.PERIOD_NOTE">{{ item.PERIOD_NOTE }}</div>
       </template>
+      <!-- 概要カラム -->
+      <template v-slot:[`item.SUMMARY`]="{ item }">
+        <div class="my-3">
+          <!-- 概要 -->
+          <div class="mb-2" v-if="!!item.SUMMARY">
+            <div class="mt-n1">【 {{ item.SUMMARY }} 】</div>
+          </div>
+          <!-- 取得方法 -->
+          <div class="mb-2" v-if="!!item.GET_METHOD" style="white-space: pre-wrap">
+            <div class="mt-n1">{{ item.GET_METHOD }}</div>
+          </div>
+        </div>
+      </template>
+
       <!-- 送料無料カラム-->
       <template v-slot:[`item.isFreeShipping`]="{ item }">
         <v-chip v-if="item.isFreeShipping" small color="pink" dark> 送料無料</v-chip>
@@ -100,7 +106,7 @@ export default {
       search: '',
       headers: [
         { text: '種類', value: 'TYPE' },
-        { text: 'コード', value: 'CODE' },
+        { text: 'コード', value: 'CODE', width: '150' },
         { text: '資料', value: 'REFS', sortable: false, width: '150' },
         { text: '開始日', value: 'START_DATE' },
         { text: '終了日', value: 'END_DATE' },
