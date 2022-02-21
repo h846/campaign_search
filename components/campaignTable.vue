@@ -24,7 +24,7 @@
       </template>
       <!-- コードカラム -->
       <template v-slot:[`item.CODE`]="{ item }">
-        <div style="font-weight: bold; font-size: 14px">{{ item.TYPE }}</div>
+        <div style="font-size: 16px">{{ item.TYPE }}</div>
       </template>
       <!-- 資料カラム-->
       <template v-slot:[`item.REFS`]="{ item }">
