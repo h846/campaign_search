@@ -130,6 +130,7 @@ export default {
         { label: 'お祝い', value: 'お祝い' },
         { label: 'お詫び', value: 'お詫び' },
         { label: 'リサイクル', value: 'リサイクル' },
+        { label: 'ハガキ', value: 'ハガキ' },
       ],
       campCode: '',
       fromDate: '',

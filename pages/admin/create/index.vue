@@ -77,6 +77,14 @@
                 ><p class="ma-0">{{ i }}</p></v-list-item-title
               >
             </v-list-item-content>
+            <v-list-item-content v-else-if="k == '参考資料'">
+              <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
+
+              <v-list-item-title v-for="(i, idx) in item" :key="idx">
+                <p v-if="idx % 2 == 0" class="ma-0">{{ i }}</p>
+                <p v-else class="mb-3">{{ i }}</p>
+              </v-list-item-title>
+            </v-list-item-content>
             <v-list-item-content v-else>
               <v-list-item-subtitle>{{ k }}</v-list-item-subtitle>
               <v-list-item-title>{{ item }}</v-list-item-title>
@@ -145,8 +153,8 @@ export default {
         期間に関するコメント: this.$store.state.period_note,
         キャンペーン概要: this.$store.state.summary,
         取得方法: this.$store.state.getMethod,
-        参考資料: this.$store.state.ref,
-        参考資料URL: this.$store.state.refURL,
+        参考資料: this.$store.state.refs,
+        //参考資料URL: this.$store.state.refURL,
         特典内容: this.$store.state.benefits,
         使用条件: this.$store.state.conditions, // USE_CONDITION1
         特記事項: this.$store.state.remarks, // USE_CONDITION2
@@ -160,8 +168,8 @@ export default {
       this.overlay = true;
       this.campInfo['特典内容'] = this.campInfo['特典内容'].join();
       this.campInfo['使用条件'] = this.campInfo['使用条件'].join();
-      this.campInfo['参考資料'] = this.campInfo['参考資料'] + ',' + this.campInfo['参考資料URL'];
-      delete this.campInfo['参考資料URL'];
+      this.campInfo['参考資料'] = this.campInfo['参考資料'].join(','); //this.campInfo['参考資料'] + ',' + this.campInfo['参考資料URL'];
+      //delete this.campInfo['参考資料URL'];
 
       let cols =
         '(TYPE, CODE, START_DATE, END_DATE, PERIOD_NOTE, SUMMARY, GET_METHOD, REFS, BENEFITS, USE_CONDITION1, USE_CONDITION2, OUTPUT)';

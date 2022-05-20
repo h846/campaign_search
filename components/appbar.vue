@@ -44,12 +44,14 @@ export default {
   components: {},
   data() {
     return {
-      title: 'キャンペーン検索',
-      isAdmin: '',
+      title: '',
+      isAdmin: false,
     };
   },
   mounted() {
     this.isAdmin = this.$store.state.adminMode;
+    console.log(this.isAdmin);
+    this.title = this.isAdmin == false ? 'キャンペーン検索' : '【 管理 】キャンペーン検索';
   },
 };
 </script>

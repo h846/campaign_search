@@ -1,8 +1,8 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from 'vuetify/es5/util/colors';
 
 export default {
   router: {
-    base: process.env.NODE_ENV === 'development' ? '/' : '/CSNet/ORDER_TOOL/campaign_search/home/'
+    base: process.env.NODE_ENV === 'development' ? '/' : '/CSApp/campaign_search/', //'/CSNet/test/campaign_search/',
   },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -12,40 +12,40 @@ export default {
     titleTemplate: '%s',
     title: 'キャンペーン検索',
     htmlAttrs: {
-      lang: 'ja'
+      lang: 'ja',
     },
-    meta: [{
-        charset: 'utf-8'
+    meta: [
+      {
+        charset: 'utf-8',
       },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1'
+        content: 'width=device-width, initial-scale=1',
       },
       {
         hid: 'description',
         name: 'description',
-        content: ''
-      }
+        content: '',
+      },
     ],
-    link: [{
+    link: [
+      {
         rel: 'icon',
         type: 'image/x-icon',
-        href: '/favicon.ico'
+        href: '/favicon.ico',
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Kosugi&display=swap'
-      }
-    ]
+        href: 'https://fonts.googleapis.com/css2?family=Kosugi&display=swap',
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['@/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    "~/plugins/vuelidate.js"
-  ],
+  plugins: ['~/plugins/vuelidate.js'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -59,7 +59,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    ['@nuxtjs/moment', ['ja']]
+    ['@nuxtjs/moment', ['ja']],
   ],
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
@@ -78,12 +78,12 @@ export default {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
-        }
-      }
-    }
+          success: colors.green.accent3,
+        },
+      },
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
-}
+  build: {},
+};

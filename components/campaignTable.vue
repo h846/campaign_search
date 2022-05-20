@@ -94,6 +94,7 @@ export default {
   props: {
     campaignList: Array,
     dispExpired: Boolean,
+    dispHiddenItem: Boolean,
     loading: Boolean,
     adminMode: Boolean,
   },
@@ -164,13 +165,21 @@ export default {
         return val;
       });
 
-      //ユーザーモードの時は表示フラグがあるもののみ表示する
+      //ユーザーモード時は表示フラグがあるもののみ表示する
       if (!this.$store.state.adminMode) {
         list = list.filter((v) => {
           return v.OUTPUT == '1';
         });
+      } else {
+        // 管理者モードが真、かつ隠しキャンペーンのみ表示が真の場合
+        // 隠しキャンペーン"のみ"を表示。
+        if (this.dispHiddenItem) {
+          list = list.filter((v) => {
+            return v.OUTPUT != '1';
+          });
+          console.log('works');
+        }
       }
-
       // リストの並びを調整
       //　期限切れとそうでないものでリストを分ける
       let invalidList = list.filter((val) => {

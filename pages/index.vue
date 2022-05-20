@@ -2,16 +2,23 @@
   <v-container fluid Sfill-height>
     <v-row justify="center" align="center">
       <v-col cols="3">
+        <!-- 通常検索とコードのみ検索の切り替え -->
+        <v-radio-group v-model="searchMethod" row>
+          <v-radio label="通常検索" value="Normal"></v-radio>
+          <v-radio label="コード検索" value="CodeOnly" color="green"></v-radio>
+        </v-radio-group>
+
         <v-text-field
           outlined
           v-model="searchFormVal"
           append-icon="mdi-magnify"
-          label="フリーワード検索"
+          label="検索"
           class="my-3"
+          hide-details
           @keydown.enter="search(searchFormVal)"
         ></v-text-field>
         <!-- 期限切れ表示非表示 -->
-        <v-switch v-model="dispSwitch" label="期限切れ非表示" :messages="switchMsg"> </v-switch>
+        <v-switch hide-details dense v-model="dispSwitch" label="期限切れ非表示"></v-switch>
       </v-col>
       <v-col cols="9">
         <v-chip-group v-model="searchItem" column>
@@ -39,17 +46,35 @@
           >
         </v-chip-group>
         <v-divider class="ma-2"></v-divider>
-        <v-chip-group v-model="searchItem" column>
-          <v-chip
-            v-for="(item, i) in searchItems.percentOff"
-            :key="i"
-            :value="item"
-            filter
-            color="light-green darken-1"
-            dark
-            >{{ item }}</v-chip
-          >
-        </v-chip-group>
+        <v-row>
+          <v-col cols="10">
+            <v-chip-group v-model="searchItem" column>
+              <v-chip
+                v-for="(item, i) in searchItems.percentOff"
+                :key="i"
+                :value="item"
+                filter
+                color="light-green darken-1"
+                dark
+                >{{ item }}</v-chip
+              >
+            </v-chip-group>
+          </v-col>
+
+          <!-- 隠しキャンペーン表示-->
+          <v-col cols="2">
+            <v-chip
+              v-if="adminMode == true"
+              @click="
+                dispHiddenItem = !dispHiddenItem;
+                search();
+              "
+              dark
+              filter
+              >{{ dispHiddenItemBtnMsg }}</v-chip
+            >
+          </v-col>
+        </v-row>
       </v-col>
       <v-col cols="12">
         <campaign-table
@@ -58,6 +83,7 @@
           :campaign-list="dataList"
           :loading="loading"
           :dispExpired="dispSwitch"
+          :dispHiddenItem="dispHiddenItem"
           @loaded="loaded"
           @reloadList="reloadList"
         />
@@ -79,7 +105,9 @@ export default {
     return {
       showTable: false,
       dispSwitch: false,
-      switchMsg: 'OFF',
+      dispHiddenItem: false,
+      dispHiddenItemBtnMsg: '非表示',
+      searchMethod: 'Normal', // Normal or CodeOnly
       searchFormVal: '',
       searchItem: '',
       searchItems: {
@@ -101,6 +129,7 @@ export default {
           他社同梱: 'NPI',
           FAX会員: 'FAX',
           送料無料: '送料無料',
+          ハガキ: 'ハガキ',
         },
         percentOff: ['5%off', '10%off', '15%off', '20%off', '25%off', '30%off', '35%off', '40%off'],
         priceOff: ['500円off', '1,000円off', '2,000円off', '3,000円off', '5,000円off'],
@@ -122,6 +151,7 @@ export default {
         'light-green darken-1',
         'amber darken-3',
         'indigo darken-1',
+        'red darken-1',
       ],
       originalList: [],
       dataList: [],
@@ -161,6 +191,7 @@ export default {
       });
     },
     search: function (searchItem) {
+      //console.log(searchItem);
       //全角半角大文字小文字すべて検索に対応できるようにする
       //全角を半角へ大文字を小文字へ
       let si = searchItem;
@@ -204,7 +235,22 @@ export default {
           return ary;
         }
         // それ以外。フリーワード検索。
-        else {
+        else if (this.searchMethod == 'CodeOnly') {
+          return this.originalList.filter((val) => {
+            for (let key of Object.keys(val)) {
+              // 資料のURLは検索しない！
+              if (key == 'REFS') {
+                val[key].forEach((elm, idx) => {
+                  if (idx % 2 != 0) {
+                    if (elm.toLowerCase().indexOf(si) !== -1) return true;
+                  }
+                });
+              } else if (key == 'CODE') {
+                if (String(val[key]).toLowerCase().indexOf(si) !== -1) return true;
+              }
+            }
+          });
+        } else if (this.searchMethod == 'Normal') {
           return this.originalList.filter((val) => {
             for (let key of Object.keys(val)) {
               // 資料のURLは検索しない！
@@ -227,7 +273,7 @@ export default {
         let types = this.searchItems.campaignType;
         let isExist = false;
         for (let key in types) {
-          if (types[key] == item) {
+          if (String(types[key]).toLowerCase() == item) {
             //送料無料というカテゴリはないので、これは除外。
             isExist = item !== '送料無料' ? true : false;
           }
@@ -236,6 +282,10 @@ export default {
       };
 
       this.dataList = searching();
+      // 配列の変更を検知しない。強制更新。
+      this.dataList.splice();
+      // 隠しキャンペーン表示ボタンのメッセージ
+      this.dispHiddenItemBtnMsg = this.dispHiddenItem == true ? '全表示' : '非表示';
     },
     loaded: function () {
       this.loading = false;

@@ -45,32 +45,36 @@
             <p class="main-header">資料</p>
             <span class="sub-header"> 資料がある場合は名前とURLを入力してください </span>
           </div>
-          <v-text-field
-            outlined
-            v-model="refName"
-            color="success"
-            label="資料の名前"
-            hide-details="auto"
-            dense
-            class="mb-2"
-          ></v-text-field>
-          <v-text-field
-            outlined
-            v-model="refURL"
-            color="success"
-            label="資料のURL"
-            hide-details="auto"
-            dense
-            :error-messages="errMsgURL"
-            class="mb-2"
-            clearable
-          ></v-text-field>
-          <div class="text-right">
-            <v-btn
-              x-small
-              class="mb-3"
-              @click="refURL = 'http://lejnet/csnet/order_tool/campaign_search/pdf/'"
-              >BASE LINK</v-btn
+          <div v-for="(i, idx) in refs" :key="idx">
+            <template v-if="idx % 2 == 0">
+              <v-text-field
+                outlined
+                v-model="refs[idx]"
+                color="success"
+                label="資料の名前"
+                hide-details="auto"
+                dense
+                class="mb-2"
+              ></v-text-field>
+              <v-text-field
+                outlined
+                v-model="refs[idx + 1]"
+                color="success"
+                label="資料のURL"
+                hide-details="auto"
+                dense
+                :error-messages="errMsgURL"
+                class="mb-2"
+                clearable
+              ></v-text-field>
+              <div class="text-right">
+                <v-btn x-small class="mb-3" @click="addDefoURL(idx + 1)">BASE LINK</v-btn>
+              </div>
+            </template>
+          </div>
+          <div style="text-align: right" class="mb-3">
+            <v-btn @click="addRef()" small color="success" dark fab
+              ><v-icon large>mdi-plus</v-icon></v-btn
             >
           </div>
         </v-col>
@@ -88,6 +92,7 @@ export default {
       errMsg: '',
       errMsgURL: '',
       getMethod: '',
+      refs: ['', ''],
       refName: '',
       refURL: '',
     };
@@ -111,12 +116,22 @@ export default {
         let obj = {};
         obj.summary = this.summary;
         obj.getMethod = this.getMethod;
-        console.log(this.getMethod);
+        obj.refs = this.refs;
+        /*
         obj.ref = this.refName;
         obj.refURL = this.refURL;
+        */
         this.$store.commit('setDetails', obj);
         this.$emit('go-to-next');
       }
+    },
+    addRef() {
+      this.refs.push('');
+      this.refs.push('');
+    },
+    addDefoURL(idx) {
+      console.log(this.refs[idx]);
+      this.$set(this.refs, idx, 'http://lejnet/csnet/order_tool/campaign_search/pdf/');
     },
   },
 };

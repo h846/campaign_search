@@ -1,19 +1,18 @@
 export const state = () => ({
   adminMode: false,
-  campType: "",
-  campCode: "",
-  startDate: "",
-  endDate: "",
-  period_note:'',
-  summary: "",
-  getMethod: "",
-  ref: "",
-  refURL: "",
+  campType: '',
+  campCode: '',
+  startDate: '',
+  endDate: '',
+  period_note: '',
+  summary: '',
+  getMethod: '',
+  refs: [],
   benefits: [],
   conditions: [],
-  remarks: "",
-  isDisplay:null
-})
+  remarks: '',
+  isDisplay: null,
+});
 
 export const mutations = {
   setCampInfo(state, campInfo) {
@@ -26,8 +25,7 @@ export const mutations = {
   setDetails(state, details) {
     state.summary = details.summary;
     state.getMethod = details.getMethod;
-    state.ref = details.ref;
-    state.refURL = details.refURL;
+    state.refs = details.refs;
   },
   setConditions(state, conditions) {
     state.conditions = conditions.conditions;
@@ -37,5 +35,5 @@ export const mutations = {
   },
   setAdminMode(state) {
     state.adminMode = true;
-  }
-}
+  },
+};
