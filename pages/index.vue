@@ -132,7 +132,15 @@ export default {
           ハガキ: 'ハガキ',
         },
         percentOff: ['5%off', '10%off', '15%off', '20%off', '25%off', '30%off', '35%off', '40%off'],
-        priceOff: ['500円off', '1,000円off', '2,000円off', '3,000円off', '5,000円off'],
+        priceOff: [
+          '500円off',
+          '1,000円off',
+          '1,500円off',
+          '2,000円off',
+          '2,500円off',
+          '3,000円off',
+          '5,000円off',
+        ],
       },
       chipColors: [
         'indigo darken-4',
