@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors';
 
 export default {
   router: {
-    base: process.env.NODE_ENV === 'development' ? '/' : '/CSApp/campaign_search/', //'/CSNet/test/campaign_search/',
+    base: process.env.NODE_ENV === 'development' ? '/' :  '/CSApp/campaign_search/'
   },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
