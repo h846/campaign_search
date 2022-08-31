@@ -123,6 +123,10 @@ export default {
         '30%OFF',
         '35%OFF',
         '40%OFF',
+        '50%OFF',
+        '60%OFF',
+        '70%OFF',
+        '80%OFF',
         '裾上げ無料',
       ],
       conditions: {
